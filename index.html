@@ -59,7 +59,7 @@
       </div>
       <hr>
       <div class="row m-0 mb-3">
-        <button class="btn btn-primary" type="submit">Send directly to Practice</button>
+        <button class="btn btn-primary" type="submit" onclick="return submitDirectly()">Send directly to Practice</button>
       </div>
       <div class="row m-0 mb-3">
         <input type="hidden" name="Redirect">
@@ -77,6 +77,10 @@
         const asString = new URLSearchParams(formData).toString();
         gpro.Redirect.value = 'Qualify.asp?' + asString;
         gpro.setAttribute('action', 'https://gpro.net/Login.asp');
+      }
+
+      function submitDirectly() {
+        gpro.setAttribute('action', 'https://gpro.net/Qualify.asp');
       }
 
     </script>
