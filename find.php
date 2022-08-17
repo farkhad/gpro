@@ -190,7 +190,10 @@ foreach ($driversGrouped as $sortedBy => $driversLevel1) {
 </head>
 
 <body class="m-5">
-    <h1 class="mb-3 text-center">Find Best Driver On The Market!</h1>
+<?php
+$page = pathinfo(__FILE__, PATHINFO_FILENAME);
+include 'nav.php';
+?>
     <form method="GET">
         <div class="w-25 mb-3">
             <label for="market">Market</label>

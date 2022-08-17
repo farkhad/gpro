@@ -44,8 +44,28 @@ if (false !== preg_match($pattern, $postraceHtml, $matches)) {
     $postraceHtml = preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $postraceHtml);
     file_put_contents($raceAnalysisFile, $postraceHtml);
 
-    echo 'Post race analysis has been stored under '
+    $message = 'Post race analysis has been stored under '
         . '<b><a href="' . $raceAnalysisFile . '" target="_blank">' . $raceAnalysisFile . '</a></b>';
 } else {
-    echo 'Cannot find Season/Race html code.';
+    $message = 'Cannot find Season/Race html code.';
 }
+?>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Download Race Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+
+<body class="m-3">
+<?php
+$page = pathinfo(__FILE__, PATHINFO_FILENAME);
+include 'nav.php';
+?>
+<div class="mt-3"><?=$message?></div>
+</body>
+</html>
+
