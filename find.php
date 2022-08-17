@@ -218,17 +218,24 @@ foreach ($driversGrouped as $sortedBy => $driversLevel1) {
                 <th>Experience<sub class="text-lowercase">min</sub></th>
                 <th>Stamina<sub class="text-lowercase">min</sub></th>
                 <th>Age<sup class="text-lowercase">max</sup></th>
-                <th colspan="2">Favourite Track ID(s)</th>
+                <th colspan="2" title="Search for Drivers w these Fav Tracks">Favourite Track ID(s)</th>
             </tr>
             <tr>
-                <td><input class="form-control form-control-sm" type="number" placeholder="85" name="OA" value="<?= $_OA ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="CON" value="<?= @$filters['CON'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="TAL" value="<?= @$filters['TAL'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="20" name="EXP" value="<?= @$filters['EXP'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="50" name="STA" value="<?= @$filters['STA'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="34" name="AGE" value="<?= @$filters['AGE'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="text" placeholder="52, 49, 10" name="FAV" value="<?= @$_GET['FAV'] ?>"></td>
-                <td><button class="btn btn-primary btn-sm">Filter</button></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="85" name="OA"
+                    value="<?= $_OA ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="CON"
+                    value="<?= @$filters['CON'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="TAL"
+                    value="<?= @$filters['TAL'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="20" name="EXP"
+                    value="<?= @$filters['EXP'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="50" name="STA"
+                    value="<?= @$filters['STA'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="34" name="AGE"
+                    value="<?= @$filters['AGE'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="text" placeholder="52, 49, 10" name="FAV"
+                    value="<?= @$_GET['FAV'] ?>"></td>
+                <td><button class="btn btn-primary btn-sm">Find</button></td>
             </tr>
         </table>
     </form>
