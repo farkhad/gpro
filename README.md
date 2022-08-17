@@ -10,9 +10,6 @@
 Rename `config.example.php` to `config.php`
 
 ## Usage
-`php -S localhost:8000`
-- http://localhost:8000/market.php download latest Drivers market file
-- http://localhost:8000/find.php Find suitable drivers
-
-### Find drivers
-Open `find.php` file and change `MARKET_FILE` constant, `$calendar` variable.
+Start local web-server `php -S localhost:8000`
+- http://localhost:8000/market.php download latest drivers market database file
+- http://localhost:8000/find.php Find best driver on the market
