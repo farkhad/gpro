@@ -24,8 +24,6 @@ if (!empty($_GET['market'])) {
 }
 unset($_GET['market']);
 
-$drivers = require $marketFolder . $marketFileDefault . '.php';
-
 $_OA = 85;
 if (!empty($_GET['OA'])) {
     $_OA = (int) $_GET['OA'];
@@ -47,12 +45,7 @@ const ASC = 'ASC';
 const DESC = 'DESC';
 const BASE_DRIVER_URI = 'https://www.gpro.net/gb/DriverProfile.asp';
 
-$filters = [
-    'CON' => 100,
-    'TAL' => 100,
-    'EXP' => 20,
-    'STA' => 0,
-];
+$filters = [];
 
 foreach ($_GET as $key => $val) {
     if (empty($val)) {
@@ -60,6 +53,12 @@ foreach ($_GET as $key => $val) {
     }
     $filters[$key] = (int) $val;
 };
+
+if (!empty($filters)) {
+    $drivers = require $marketFolder . $marketFileDefault . '.php';
+} else {
+    $drivers = ['drivers' => []];
+}
 
 // Supported 3 levels of sorting
 define('SORTING', [
@@ -183,8 +182,7 @@ foreach ($driversGrouped as $sortedBy => $driversLevel1) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Market</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
 </head>
@@ -213,32 +211,54 @@ include 'nav.php';
                 </div>
             </div>
         </div>
-        <table>
+        <table class="table table-striped">
             <tr class="text-uppercase">
                 <th>OA<sup class="text-lowercase">max</sup></th>
                 <th>Concentration<sub class="text-lowercase">min</sub></th>
                 <th>Talent<sub class="text-lowercase">min</sub></th>
+                <th>Aggressiveness<sub class="text-lowercase">min</sub></th>
                 <th>Experience<sub class="text-lowercase">min</sub></th>
+                <th>Technical Insight<sub class="text-lowercase">min</sub></th>
                 <th>Stamina<sub class="text-lowercase">min</sub></th>
-                <th>Age<sup class="text-lowercase">max</sup></th>
-                <th colspan="2" title="Search for Drivers w these Fav Tracks">Favourite Track ID(s)</th>
             </tr>
             <tr>
                 <td><input class="form-control form-control-sm" type="number" placeholder="85" name="OA"
                     value="<?= $_OA ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="CON"
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="CON"
                     value="<?= @$filters['CON'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="100" name="TAL"
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="TAL"
                     value="<?= @$filters['TAL'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="20" name="EXP"
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="AGG"
+                    value="<?= @$filters['AGG'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="EXP"
                     value="<?= @$filters['EXP'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="50" name="STA"
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="TEI"
+                    value="<?= @$filters['TEI'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="STA"
                     value="<?= @$filters['STA'] ?>"></td>
-                <td><input class="form-control form-control-sm" type="number" placeholder="34" name="AGE"
+            </tr>
+            <tr class="text-uppercase">
+                <th>Charisma<sub class="text-lowercase">min</sub></th>
+                <th>Motivation<sub class="text-lowercase">min</sub></th>
+                <th>Reputation<sub class="text-lowercase">min</sub></th>
+                <th>Weight<sup class="text-lowercase">max</sup></th>
+                <th>Age<sup class="text-lowercase">max</sup></th>
+                <th colspan="2" title="Search for Drivers w these Fav Tracks">Favourite Track ID(s)</th>
+            </tr>
+            <tr>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="CHA"
+                    value="<?= @$filters['CHA'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="MOT"
+                    value="<?= @$filters['MOT'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-250" name="REP"
+                    value="<?= @$filters['REP'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-150" name="WEI"
+                    value="<?= @$filters['WEI'] ?>"></td>
+                <td><input class="form-control form-control-sm" type="number" placeholder="0-99" name="AGE"
                     value="<?= @$filters['AGE'] ?>"></td>
                 <td><input class="form-control form-control-sm" type="text" placeholder="52, 49, 10" name="FAV"
                     value="<?= @$_GET['FAV'] ?>"></td>
-                <td><button class="btn btn-primary btn-sm">Find</button></td>
+                <td><button type="submit" class="btn btn-primary btn-sm w-100">Find</button></td>
             </tr>
         </table>
     </form>
@@ -246,13 +266,12 @@ include 'nav.php';
         <thead>
             <tr class="text-uppercase">
                 <th data-field="NAME" data-formatter="nameFormatter">Name</th>
-                <th data-field="ID" data-formatter="ranking">Ranking</th>
                 <th data-field="OA" data-sortable="true">OA</th>
                 <th data-field="CON" data-sortable="true">Con</th>
                 <th data-field="TAL" data-sortable="true">Tal</th>
                 <th data-field="AGG">Agg</th>
                 <th data-field="EXP" data-sortable="true">Exp</th>
-                <th data-field="TEI">TI</th>
+                <th data-field="TEI">TEI</th>
                 <th data-field="STA" data-sortable="true">Sta</th>
                 <th data-field="CHA" data-sortable="true">Cha</th>
                 <th data-field="MOT">Mot</th>
@@ -297,10 +316,6 @@ include 'nav.php';
 
         function feeFormatter(index, row) {
             return formatNumber(row.FEE);
-        }
-
-        function ranking(index, row) {
-            return Number(row.CON + row.TAL + 0.1 * row.AGG + 1.5 * row.EXP + 2 * row.STA - row.WEI).toFixed(1);
         }
     </script>
 </body>
