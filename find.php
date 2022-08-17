@@ -5,24 +5,21 @@ $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 $marketFiles = glob($marketFolder . '*.php');
 rsort($marketFiles);
 $marketFiles = array_slice($marketFiles, 0, 3);
-array_walk($marketFiles, function (&$element) {
+array_walk($marketFiles, function (&$element) use ($marketFolder) {
     $element = str_replace(
-        ['market' . DIRECTORY_SEPARATOR, '.php'],
+        [$marketFolder, '.php'],
         ['', ''],
         $element
     );
 });
 
-if (!count($marketFiles)) {
-    echo 'Market file not found. <a href="market.php">Download</a> latest drivers market database file.';
-    exit;
+if (count($marketFiles)) {
+    $marketFileDefault = $marketFiles[0];
+    if (!empty($_GET['market'])) {
+        $marketFileDefault = $_GET['market'];
+    }
+    unset($_GET['market']);
 }
-
-$marketFileDefault = $marketFiles[0];
-if (!empty($_GET['market'])) {
-    $marketFileDefault = $_GET['market'];
-}
-unset($_GET['market']);
 
 $_OA = 85;
 if (!empty($_GET['OA'])) {
@@ -52,9 +49,9 @@ foreach ($_GET as $key => $val) {
         continue;
     }
     $filters[$key] = (int) $val;
-};
+}
 
-if (!empty($filters)) {
+if (!empty($filters) && !empty($marketFileDefault)) {
     $drivers = require $marketFolder . $marketFileDefault . '.php';
 } else {
     $drivers = ['drivers' => []];
@@ -83,7 +80,7 @@ foreach ($drivers['drivers'] as $driver) {
     }
 
     foreach ($filters as $key => $min) {
-        if ($key === 'AGE') {
+        if (in_array($key, ['AGE', 'WEI'])) {
             if ($driver[$key] > $min) {
                 continue 2;
             }
@@ -193,6 +190,11 @@ $page = pathinfo(__FILE__, PATHINFO_FILENAME);
 include 'nav.php';
 ?>
     <form method="GET">
+        <?php if (empty($marketFileDefault)) : ?>
+        <p class="text-danger">Market file not found.
+            <a href="market.php">Download</a> latest drivers market database file.
+        </p>
+        <?php endif; ?>
         <div class="w-25 mb-3">
             <label for="market">Market</label>
             <div class="row">
@@ -262,23 +264,24 @@ include 'nav.php';
             </tr>
         </table>
     </form>
+    <p>Total: <?=count($drivers)?></p>
     <table class="d-none" id="table" data-toggle="table" data-search="true" data-show-columns="true" data-sortable="true" data-buttons-align="left" data-search-align="left">
         <thead>
             <tr class="text-uppercase">
-                <th data-field="NAME" data-formatter="nameFormatter">Name</th>
+                <th data-field="NAME" data-sortable="true" data-formatter="nameFormatter">Name</th>
                 <th data-field="OA" data-sortable="true">OA</th>
                 <th data-field="CON" data-sortable="true">Con</th>
                 <th data-field="TAL" data-sortable="true">Tal</th>
-                <th data-field="AGG">Agg</th>
+                <th data-field="AGG" data-sortable="true">Agg</th>
                 <th data-field="EXP" data-sortable="true">Exp</th>
-                <th data-field="TEI">TEI</th>
+                <th data-field="TEI" data-sortable="true">TEI</th>
                 <th data-field="STA" data-sortable="true">Sta</th>
                 <th data-field="CHA" data-sortable="true">Cha</th>
-                <th data-field="MOT">Mot</th>
-                <th data-field="REP">Rep</th>
-                <th data-field="WEI">Wei</th>
+                <th data-field="MOT" data-sortable="true">Mot</th>
+                <th data-field="REP" data-sortable="true">Rep</th>
+                <th data-field="WEI" data-sortable="true">Wei</th>
                 <th data-field="AGE" data-sortable="true">Age</th>
-                <th data-field="FEE" data-formatter="feeFormatter">Fee</th>
+                <th data-field="FEE" data-sortable="true" data-formatter="feeFormatter">Fee</th>
                 <th data-field="SAL" data-formatter="salFormatter" data-sortable="true">Sal</th>
                 <th data-field="OFF" data-sortable="true">Offers</th>
                 <th data-field="FAV" data-formatter="favFormatter">Favs</th>
@@ -297,12 +300,12 @@ include 'nav.php';
         });
         $table.toggleClass('d-none');
 
-        function nameFormatter(index, row) {
+        function nameFormatter(value, row) {
             return '<a href="<?= \BASE_DRIVER_URI ?>?ID=' + row.ID + '" target="_blank">' +
                 row.NAME + '</a>';
         }
 
-        function favFormatter(index, row) {
+        function favFormatter(value, row) {
             return row.FAV.length;
         }
 
@@ -310,12 +313,12 @@ include 'nav.php';
             return new Intl.NumberFormat('de-DE').format(n)
         }
 
-        function salFormatter(index, row) {
-            return formatNumber(row.SAL);
+        function salFormatter(value) {
+            return formatNumber(value);
         }
 
-        function feeFormatter(index, row) {
-            return formatNumber(row.FEE);
+        function feeFormatter(value) {
+            return formatNumber(value);
         }
     </script>
 </body>
