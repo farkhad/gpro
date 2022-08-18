@@ -12,29 +12,25 @@ require __DIR__ . '/config.php';
 
 session_start();
 
+$jar = new SessionCookieJar('gpro', true);
+$client = new Client(['base_uri' => \GPRO_URL, 'cookies' => $jar]);
+$response = $client->post('Login.asp?Redirect=gpro.asp', [
+    'form_params' => [
+        'textLogin' => \USERNAME,
+        'textPassword' => \PASSWORD,
+        'token' => \HASH,
+        'Logon' => 'Login',
+        'LogonFake' => 'Login',
+    ],
+    'allow_redirects' => true,
+]);
+
+$json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
+
 $marketFile = 'market' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.php';
-if (!file_exists($marketFile)) {
-    $jar = new SessionCookieJar('gpro', true);
-    $client = new Client(['base_uri' => \GPRO_URL, 'cookies' => $jar]);
-    $response = $client->post('Login.asp?Redirect=gpro.asp', [
-        'form_params' => [
-            'textLogin' => \USERNAME,
-            'textPassword' => \PASSWORD,
-            'token' => \HASH,
-            'Logon' => 'Login',
-            'LogonFake' => 'Login',
-        ],
-        'allow_redirects' => true,
-    ]);
+file_put_contents($marketFile, "<?php\n\nreturn " . var_export(json_decode($json, true), true) . ";");
 
-    $json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
-
-    file_put_contents($marketFile, "<?php\n\nreturn " . var_export(json_decode($json, true), true) . ";");
-
-    $message = "\nMarket file has been stored under <b>$marketFile</b>\n";
-} else {
-    $message = "\nMarket file <b>$marketFile</b> exists already.\n";
-}
+$message = "\nMarket file has been stored under <b>$marketFile</b>\n";
 
 if (php_sapi_name() === 'cli') {
     echo $message;
