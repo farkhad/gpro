@@ -38,6 +38,14 @@ $marketFiles = array_slice($marketFiles, 0, 3);
 $page = pathinfo(__FILE__, PATHINFO_FILENAME);
 include 'nav.php';
 ?>
+<div class="row mb-3">
+    <div class="col">
+        <a href="postrace.php">Download</a> latest Race Analysis.
+    </div>
+    <div class="col">
+        <a href="market.php">Download</a> latest Market Database.
+    </div>
+</div>
 <div class="row">
     <div class="col">
         Race Analysis from Latest 2 Seasons

@@ -9,7 +9,9 @@
 `composer install`
 
 ## Configuration
-Rename `config.example.php` to `config.php`
+Rename `config.example.php` to `config.php`, open `config.php` with Notepad, and setup `USERNAME` and `PASSWORD`
+
+Open `postrace.bat` with Notepad, change path, setup Windows Scheduler to run `postrace.bat` after every race
 
 ## Usage
 Start local web-server `php -S localhost:8000`

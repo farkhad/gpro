@@ -13,12 +13,6 @@ function linkAttr($page, $currentPage)
         <a <?=linkAttr('index', $page)?>>Home</a>
     </li>
     <li class="nav-item">
-        <a <?=linkAttr('postrace', $page)?>>Download Race Analysis</a>
-    </li>
-    <li class="nav-item">
-        <a <?=linkAttr('market', $page)?>>Download Market Database</a>
-    </li>
-    <li class="nav-item">
         <a <?=linkAttr('find', $page)?>>Find Best Driver</a>
     </li>
 </ul>

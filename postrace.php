@@ -40,14 +40,19 @@ if (false !== preg_match($pattern, $postraceHtml, $matches)) {
     $raceAnalysisFile = $seasonFolder . DIRECTORY_SEPARATOR
         . 'S' . $season . 'R' . $race . ' ' . $trackName . '.html';
 
-    // wipe out <script src="..." ...>
+    // wipe out [src="..."]
     $postraceHtml = preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $postraceHtml);
     file_put_contents($raceAnalysisFile, $postraceHtml);
 
-    $message = 'Post race analysis has been stored under '
-        . '<b><a href="' . $raceAnalysisFile . '" target="_blank">' . $raceAnalysisFile . '</a></b>';
+    $message = "\nPost race analysis has been stored under "
+        . '<b><a href="' . $raceAnalysisFile . '" target="_blank">' . $raceAnalysisFile . "</a></b>\n";
 } else {
-    $message = 'Cannot find Season/Race html code.';
+    $message = "\nCannot find Season/Race html code.\n";
+}
+
+if (php_sapi_name() === 'cli') {
+    echo $message;
+    exit;
 }
 ?>
 <!doctype html>

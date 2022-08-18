@@ -12,25 +12,34 @@ require __DIR__ . '/config.php';
 
 session_start();
 
-$jar = new SessionCookieJar('gpro', true);
-$client = new Client(['base_uri' => \GPRO_URL, 'cookies' => $jar]);
-$response = $client->post('Login.asp?Redirect=gpro.asp', [
-    'form_params' => [
-        'textLogin' => \USERNAME,
-        'textPassword' => \PASSWORD,
-        'token' => \HASH,
-        'Logon' => 'Login',
-        'LogonFake' => 'Login',
-    ],
-    'allow_redirects' => true,
-]);
+$marketFile = 'market' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.php';
+if (!file_exists($marketFile)) {
+    $jar = new SessionCookieJar('gpro', true);
+    $client = new Client(['base_uri' => \GPRO_URL, 'cookies' => $jar]);
+    $response = $client->post('Login.asp?Redirect=gpro.asp', [
+        'form_params' => [
+            'textLogin' => \USERNAME,
+            'textPassword' => \PASSWORD,
+            'token' => \HASH,
+            'Logon' => 'Login',
+            'LogonFake' => 'Login',
+        ],
+        'allow_redirects' => true,
+    ]);
 
-$gzfilename = 'market' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.php';
-$json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
+    $json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
 
-file_put_contents($gzfilename, "<?php\n\nreturn " . var_export(json_decode($json, true), true) . ";");
+    file_put_contents($marketFile, "<?php\n\nreturn " . var_export(json_decode($json, true), true) . ";");
 
-$message = "\nMarket file has been stored under <b>$gzfilename</b>\n";
+    $message = "\nMarket file has been stored under <b>$marketFile</b>\n";
+} else {
+    $message = "\nMarket file <b>$marketFile</b> exists already.\n";
+}
+
+if (php_sapi_name() === 'cli') {
+    echo $message;
+    exit;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -43,10 +52,11 @@ $message = "\nMarket file has been stored under <b>$gzfilename</b>\n";
 </head>
 
 <body class="m-5">
-<?php
-$page = pathinfo(__FILE__, PATHINFO_FILENAME);
-include 'nav.php';
-?>
-<div class="mt-3"><?=$message?></div>
+    <?php
+    $page = pathinfo(__FILE__, PATHINFO_FILENAME);
+    include 'nav.php';
+    ?>
+    <div class="mt-3"><?= $message ?></div>
 </body>
+
 </html>
