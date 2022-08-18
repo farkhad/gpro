@@ -7,12 +7,21 @@ function linkAttr($page, $currentPage)
     return 'class="nav-link" href="' . $page . '.php"';
 }
 ?>
-<!-- https://getbootstrap.com/docs/5.1/components/navs-tabs/#tabs -->
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-        <a <?=linkAttr('index', $page)?>>Home</a>
+        <a <?= linkAttr('index', $page) ?>>Home</a>
     </li>
     <li class="nav-item">
-        <a <?=linkAttr('find', $page)?>>Find Best Driver</a>
+        <a <?= linkAttr('find', $page) ?>>Find Best Driver</a>
+    </li>
+    <li class="nav-item">
+        <a <?= linkAttr('profile', $page) ?>>Driver's Profile</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="postrace.php">Latest Race Analysis</a></li>
+            <li><a class="dropdown-item" href="market.php">Latest Market Database</a></li>
+        </ul>
     </li>
 </ul>
