@@ -1,6 +1,11 @@
 # [Grand Prix Racing Online](https://www.gpro.net) Home Server
 ![](screenshots/home.png)
 
+## Features
+- Automatically download post Race Analysis as HTML file
+- Keep track of Drivers Market Database
+- Search for Best Driver incl. by Favourite Track
+
 ## Requirements
 - PHP 8 ([PHP for Windows](https://windows.php.net/download), pick zip `Thread Safe` version)
 - Composer ([Installation Windows](https://getcomposer.org/doc/00-intro.md#installation-windows))
