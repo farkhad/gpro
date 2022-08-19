@@ -4,35 +4,39 @@
 ## Features
 - Automatically download post Race Analysis as HTML file
 - Keep track of Drivers Market Database
-- Search for Best Driver incl. by Favourite Track
+- Find Best Driver incl. by Favourite Track
+- Find Driver's Profile
 
 ## Requirements
-- PHP 8 ([PHP for Windows](https://windows.php.net/download), pick zip `Thread Safe` version)
-- Composer ([Installation Windows](https://getcomposer.org/doc/00-intro.md#installation-windows))
+- Microsoft Windows 7 or higher
+- Installed PHP 8 or higher ([PHP for Windows](https://windows.php.net/download))
+- Installed Composer 2 or higher ([Installation Windows](https://getcomposer.org/doc/00-intro.md#installation-windows))
 
 ## Installation
-- Download GPRO Home Server zip from https://github.com/farkhad/gpro/archive/refs/heads/main.zip
-- Extract zip to preferred folder
-- From GPRO Home Server folder run terminal command
-`composer install`
+- Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
+- Extract zip to preferred *GPRO Home Server* folder
+- Navigate to *GPRO Home Server* folder and run terminal command `composer install`
 
 ## Configuration
-- Rename `config.example.php` to `config.php`, open `config.php` with Notepad, and setup `USERNAME` and `PASSWORD`
-- Open `postrace.bat` with Notepad, change path, setup Windows Scheduler to run `postrace.bat` after every race
-- Open `homeserver.bat` with Notepad, change path
+- Rename `config.example.php` to `config.php`
+  - Open `config.php` with Notepad, set `USERNAME` & `PASSWORD`
+- Open `postrace.bat`, `homeserver.bat` with Notepad
+  - Set path to *GPRO Home Server* folder
+  - Setup Windows Scheduler to run `postrace.bat` after every race
 
 ## Usage
 ### Automatically
-Launch `homeserver.bat`. When you are finished working on Home Server, press `CTRL+C` and type `Y` in the opened terminal window
+Launch `homeserver.bat` 
+
+When you are finished working on *GPRO Home Server*, press `CTRL+C` and type `Y` in the opened terminal window
 
 ### Manually
-Navigate to folder where GPRO Home Server files reside
-
-Start local web-server by typing `php -S localhost:8000` in your terminal window
+Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost:8000`
 - http://localhost:8000/ Home page
 - http://localhost:8000/postrace.php Download latest Race Analysis html file
-- http://localhost:8000/market.php Download latest drivers market database file
-- http://localhost:8000/find.php Find best driver on the market
+- http://localhost:8000/market.php Download latest market database file
+- http://localhost:8000/find.php Find best driver
+- http://localhost:8000/profile.php Find driver's profile
 
 ## Screenshots
 ### Download Race Analysis
@@ -41,3 +45,5 @@ Start local web-server by typing `php -S localhost:8000` in your terminal window
 ![](screenshots/market.png)
 ### Find Best Driver
 ![](screenshots/find.png)
+### Find Driver's Profile
+![](screenshots/profile.png)

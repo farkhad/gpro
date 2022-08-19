@@ -1,5 +1,9 @@
 <?php
 
+/**
+ *
+ * Find best driver on the market
+ */
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 
 $marketFiles = glob($marketFolder . '*.php');
@@ -186,7 +190,6 @@ foreach ($driversGrouped as $sortedBy => $driversLevel1) {
 
 <body class="m-5">
 <?php
-$page = pathinfo(__FILE__, PATHINFO_FILENAME);
 include 'nav.php';
 ?>
     <form method="GET">
@@ -195,14 +198,9 @@ include 'nav.php';
             <a href="market.php">Download</a> latest drivers market database file.
         </p>
         <?php endif; ?>
-        <div class="row">
-            <div class="col">
-                Recommendation: <a href="market.php">download</a> latest market database file just before looking for the best driver.
-            </div>
-            <div class="col">
-                <q>The # of offers on drivers can change continuously, and on staff decision day you'll see more differences</q>, said <a href="https://www.gpro.net/gb/forum/ViewTopic.asp?TopicId=30861&PostId=4916975#post4916975" target="_blank">Miel Soeterbroek</a>.
-            </div>
-        </div>
+        <p>
+        <small>Recommendation: <a href="market.php">download</a> latest market database file just before looking for the best driver.</small>
+        </p>
         <div class="w-25 mb-3">
             <label for="market">Market</label>
             <div class="row">
