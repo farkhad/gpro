@@ -31,7 +31,7 @@ Launch `homeserver.bat`
 When you are finished working on *GPRO Home Server*, press `CTRL+C` and type `Y` in the opened terminal window
 
 ### Manually
-Navigate to *GPRO Home Server* folder and start *GPRO Home Server* by typing terminal command `php -S localhost:8000`
+Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost:8000`
 - http://localhost:8000/ Home page
 - http://localhost:8000/postrace.php Download latest Race Analysis html file
 - http://localhost:8000/market.php Download latest market database file
