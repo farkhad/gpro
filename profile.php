@@ -1,27 +1,35 @@
 <?php
 
 /**
- * Find Driver's Profile by ID among market database files
+ *
+ * Find Driver's Profile by ID against downloaded market database files
  */
+
+// Perform search against limited number of market files
+const MARKET_FILES_LIMIT = 200;
+
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 $marketFiles = glob($marketFolder . '*.php');
+rsort($marketFiles);
+$marketFiles = array_slice($marketFiles, 0, MARKET_FILES_LIMIT);
+
 $profile = [];
 $marketFile = '';
 
 if (!empty($_GET['id'])) {
     $driverId = (int) $_GET['id'];
 
-    rsort($marketFiles);
     foreach ($marketFiles as $marketFile) {
         $content = file_get_contents($marketFile);
-        if (false !== strpos($content, "'ID' => $driverId")) {
+        if (false !== strpos($content, "'ID' => $driverId,")) {
             $drivers = require $marketFile;
             foreach ($drivers['drivers'] as $driver) {
                 if ($driver['ID'] === $driverId) {
                     $profile = $driver;
-                    break 2;
+                    break;
                 }
             }
+            break;
         }
     }
 }
@@ -39,7 +47,6 @@ if (!empty($_GET['id'])) {
 
 <body class="m-5">
     <?php
-    $page = pathinfo(__FILE__, PATHINFO_FILENAME);
     include 'nav.php';
     ?>
     <div class="row">
@@ -64,15 +71,17 @@ if (!empty($_GET['id'])) {
                         <button class="btn btn-primary btn-sm">Find</button>
                     </div>
                 </div>
-                <p class="mt-3">
-                    Search will be performed among <b><?= count($marketFiles) ?></b> market database files.
+                <p class="mt-3 mb-0">
+                    Search will be performed against maximum of <b><?= MARKET_FILES_LIMIT ?></b> latest market database files.
+                </p>
+                <p>You have got <b><?= count($marketFiles) ?></b> market database files on your computer.
                 </p>
             </form>
         </div>
         <div class="col w-25">
             <?php if (!empty($profile)) : ?>
                 <p class="text-success">
-                    <b><?= $driver['NAME'] ?></b> (<?= $driver['AGE'] ?>)
+                    <b><a href="https://www.gpro.net/gb/DriverProfile.asp?ID=<?= $driver['ID'] ?>" target="_blank"><?= $driver['NAME'] ?></a></b> (<?= $driver['AGE'] ?>)
                     from database <b><?= $marketFile ?></b>
                 </p>
                 <table class="table table-striped table-sm font-monospace">

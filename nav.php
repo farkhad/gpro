@@ -1,4 +1,6 @@
 <?php
+$page = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_FILENAME);
+
 function linkAttr($page, $currentPage)
 {
     if ($currentPage === $page) {
@@ -6,6 +8,7 @@ function linkAttr($page, $currentPage)
     }
     return 'class="nav-link" href="' . $page . '.php"';
 }
+
 ?>
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">

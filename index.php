@@ -36,7 +36,6 @@ $marketFiles = array_slice($marketFiles, 0, 3);
 
 <body class="m-5">
 <?php
-$page = pathinfo(__FILE__, PATHINFO_FILENAME);
 include 'nav.php';
 ?>
 <div class="row mb-3">
