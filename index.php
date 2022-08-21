@@ -57,10 +57,10 @@ include 'nav.php';
                     <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
 <?php
 $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
-$raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile)
+$raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile);
+// upload.php?<?= http_build_query(['season' => $season, 'file' => $raceAnalysisFile], '&')
 ?>
                         <li><a href="<?=$seasonRaceAnalysisFile?>" target="_blank"><?=$raceAnalysisFile?></a></li>
-                        <!-- <a href="upload.php?<?= http_build_query(['season' => $season, 'file' => $raceAnalysisFile], '&') ?>">upload</a> -->
                     <?php endforeach; ?>
                 </ul>
             </li>

@@ -62,8 +62,6 @@ class Dropbox
             'state' => $state
         ]);
 
-        // Assemble the authorize URL and direct the user to a browser
-        // to sign in to their AWeber customer account
         $authorizeQuery = array(
             "response_type" => "code",
             "token_access_type" => "offline",
@@ -155,7 +153,7 @@ class Dropbox
      *
      * @return array
      */
-    public function simpleUpload(string $path, $contents, $mode = 'add', $autorename = true): array
+    public function simpleUpload(string $path, $contents, $mode = 'add', $autorename = false): array
     {
         $arguments = [
             'path' => $path,

@@ -28,7 +28,7 @@ if (!empty($_GET['season']) && !empty($_GET['file'])) {
         ]),
     ]);
 
-    $meta = $dropbox->simpleUpload('/seasons/' . $season . '/' . $fileName, $contents);
+    $meta = $dropbox->simpleUpload('/seasons/' . $season . '/' . $fileName, $contents, 'overwrite');
 
     Dropbox::updateListOfUploadedFiles($season, $meta);
 }
