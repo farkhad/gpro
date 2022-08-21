@@ -44,7 +44,7 @@ if (!empty($_GET['FAV'])) {
 
 const ASC = 'ASC';
 const DESC = 'DESC';
-const BASE_DRIVER_URI = 'https://www.gpro.net/gb/DriverProfile.asp';
+const BASE_DRIVER_URI = 'https://www.gpro.net/DriverProfile.asp';
 
 $filters = [];
 
