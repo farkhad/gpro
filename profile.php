@@ -40,7 +40,7 @@ if (!empty($_GET['id'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GPRO Home Server</title>
+    <title>Driver's Profile <?= $profile['NAME'] ?? '' ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
@@ -58,7 +58,7 @@ if (!empty($_GET['id'])) {
             <form method="GET">
                 <div class="row w-75 mb-3">
                     <div class="col">
-                        <label for="link">Copy/Paste GPRO Driver's Profile Link</label>
+                        <label for="link">Copy/Paste Driver's Profile Link</label>
                         <input class="form-control form-control-sm" type="text" id="link" name="link" placeholder="https://www.gpro.net/gb/DriverProfile.asp?ID=83" oninput="this.value !== '' ? this.form.id.value = Number(this.value.split('?ID=')[1]) : ''">
                     </div>
                 </div>
@@ -81,7 +81,7 @@ if (!empty($_GET['id'])) {
         <div class="col w-25">
             <?php if (!empty($profile)) : ?>
                 <p class="text-success">
-                    <b><a href="https://www.gpro.net/gb/DriverProfile.asp?ID=<?= $driver['ID'] ?>" target="_blank"><?= $driver['NAME'] ?></a></b> (<?= $driver['AGE'] ?>)
+                    <b><a href="https://www.gpro.net/gb/DriverProfile.asp?ID=<?= $profile['ID'] ?>" target="_blank"><?= $profile['NAME'] ?></a></b> (<?= $profile['AGE'] ?>)
                     from database <b><?= $marketFile ?></b>
                 </p>
                 <table class="table table-striped table-sm font-monospace">

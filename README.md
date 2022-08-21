@@ -9,8 +9,8 @@
 
 ## Requirements
 - Microsoft Windows 7 or higher
-- Installed PHP 8 or higher ([PHP for Windows](https://windows.php.net/download))
-- Installed Composer 2 or higher ([Installation Windows](https://getcomposer.org/doc/00-intro.md#installation-windows))
+- Installed PHP 8 or higher ([Download](https://windows.php.net/download))
+- Installed Composer 2 or higher ([Download](https://getcomposer.org/doc/00-intro.md#installation-windows))
 
 ## Installation
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
