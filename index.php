@@ -3,6 +3,7 @@
  * Home page
  * Display race analysis, market files
  */
+const MARKET_FILES_LIMIT = 5;
 
 $seasonFolder = 'seasons' . DIRECTORY_SEPARATOR;
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
@@ -19,9 +20,13 @@ array_walk($seasons, function (&$season) use ($seasonFolder, &$raceAnalysisFiles
     $raceAnalysisFiles[$season] = $seasonRaceAnalysisFiles;
 });
 
-$marketFiles = glob($marketFolder . '*.php');
+$marketFiles = glob($marketFolder . '[!TD]*.php');
 rsort($marketFiles);
-$marketFiles = array_slice($marketFiles, 0, 3);
+$marketFiles = array_slice($marketFiles, 0, \MARKET_FILES_LIMIT);
+
+$marketFilesTechDirectors = glob($marketFolder . '[TD-]*.php');
+rsort($marketFilesTechDirectors);
+$marketFilesTechDirectors = array_slice($marketFilesTechDirectors, 0, \MARKET_FILES_LIMIT);
 ?>
 <!doctype html>
 <html lang="en">
@@ -71,12 +76,23 @@ $raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator .
         <?php if (!count($marketFiles)) : ?>
         Market files not found. <a href="market.php">Download</a> latest drivers market database file.
         <?php else : ?>
-        Latest 3 Market Files
-        <ul>
+        Latest <?= \MARKET_FILES_LIMIT ?> Market Files
+        <ol>
         <?php foreach ($marketFiles as $marketFile) :?>
             <li><?=$marketFile?></li>
         <?php endforeach; ?>
-        </ul>
+        </ol>
+        <?php endif; ?>
+
+        <?php if (!count($marketFilesTechDirectors)) : ?>
+        Market files not found. <a href="market.php">Download</a> latest tech directors market database file.
+        <?php else : ?>
+        Latest <?= \MARKET_FILES_LIMIT ?> Tech Directors Market Files
+        <ol>
+        <?php foreach ($marketFilesTechDirectors as $marketFile) :?>
+            <li><?= $marketFile ?></li>
+        <?php endforeach; ?>
+        </ol>
         <?php endif; ?>
     </div>
 </div>

@@ -9,7 +9,7 @@
 const MARKET_FILES_LIMIT = 200;
 
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
-$marketFiles = glob($marketFolder . '*.php');
+$marketFiles = glob($marketFolder . '[!TD]*.php');
 rsort($marketFiles);
 $marketFiles = array_slice($marketFiles, 0, MARKET_FILES_LIMIT);
 

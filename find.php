@@ -6,7 +6,7 @@
  */
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 
-$marketFiles = glob($marketFolder . '*.php');
+$marketFiles = glob($marketFolder . '[!TD]*.php');
 rsort($marketFiles);
 $marketFiles = array_slice($marketFiles, 0, 3);
 array_walk($marketFiles, function (&$element) use ($marketFolder) {

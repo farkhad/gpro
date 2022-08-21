@@ -27,11 +27,20 @@ $response = $client->post('Login.asp?Redirect=gpro.asp', [
 ]);
 
 $json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
+$jsonTechDirectors = gzdecode($client->get('GetMarketFile.asp?market=tds&type=json')->getBody());
 
-$marketFile = 'market' . DIRECTORY_SEPARATOR . date('Y-m-d') . '.php';
+$marketFolder = 'market' . DIRECTORY_SEPARATOR;
+$marketFile = $marketFolder . date('Y-m-d') . '.php';
+$marketFileTechDirectors = $marketFolder . 'TD-' . date('Y-m-d') . '.php';
+
 file_put_contents($marketFile, "<?php\n\nreturn " . var_export(json_decode($json, true), true) . ";");
+file_put_contents(
+    $marketFileTechDirectors,
+    "<?php\n\nreturn " . var_export(json_decode($jsonTechDirectors, true), true) . ";"
+);
 
-$message = "\nMarket file has been stored under <b>$marketFile</b>\n";
+$message = "\n<p>Market file has been stored under <b>$marketFile</b></p>\n";
+$message .= "<p>Tech Directors Market file has been stored under <b>$marketFileTechDirectors</b></p>\n";
 
 if (php_sapi_name() === 'cli') {
     echo $message;

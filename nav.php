@@ -20,6 +20,9 @@ function linkAttr($page, $currentPage)
     <li class="nav-item">
         <a <?= linkAttr('profile', $page) ?>><i class="fa-solid fa-user"></i> Driver's Profile</a>
     </li>
+    <li class="nav-item">
+        <a <?= linkAttr('find-td', $page) ?>><i class="fa-solid fa-user-tie"></i> Find Tech Director</a>
+    </li>
     <li class="nav-item dropdown">
         <a class="nav-link <?= in_array($page, ['postrace', 'market']) ? 'active' : '' ?> dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><i class="fa-solid fa-download"></i> Download</a>
         <ul class="dropdown-menu">

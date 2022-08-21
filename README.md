@@ -3,9 +3,10 @@
 
 ## Features
 - Automatically download post Race Analysis as HTML file
-- Keep track of Drivers Market Database
+- Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
 - Find Driver's Profile
+- Find Tech Director
 
 ## Requirements
 - Microsoft Windows 7 or higher
@@ -37,6 +38,7 @@ Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost
 - http://localhost:8000/market.php Download latest market database file
 - http://localhost:8000/find.php Find best driver
 - http://localhost:8000/profile.php Find driver's profile
+- http://localhost:8000/find-td.php Find tech director
 
 ## Screenshots
 ### Download Race Analysis
@@ -47,3 +49,5 @@ Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost
 ![](screenshots/find.png)
 ### Find Driver's Profile
 ![](screenshots/profile.png)
+### Find Tech Director
+![](screenshots/find-td.png)
