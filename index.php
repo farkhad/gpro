@@ -3,6 +3,7 @@
  * Home page
  * Display race analysis, market files
  */
+session_start();
 
 $seasonFolder = 'seasons' . DIRECTORY_SEPARATOR;
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
@@ -58,7 +59,8 @@ include 'nav.php';
 $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
 $raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile)
 ?>
-                        <li><a href="<?=$seasonRaceAnalysisFile?>" target="_blank"><?=$raceAnalysisFile?></a>
+                        <li><a href="<?=$seasonRaceAnalysisFile?>" target="_blank"><?=$raceAnalysisFile?></a></li>
+                        <!-- <a href="upload.php?<?= http_build_query(['season' => $season, 'file' => $raceAnalysisFile], '&') ?>">upload</a> -->
                     <?php endforeach; ?>
                 </ul>
             </li>

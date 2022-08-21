@@ -1,5 +1,10 @@
 {
-    "require": {
-        "guzzlehttp/guzzle": "^7.2"
+  "require": {
+    "guzzlehttp/guzzle": "^7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dropbox\\": "dropbox/"
     }
+  }
 }
