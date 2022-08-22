@@ -18,6 +18,9 @@
 - Extract zip to preferred *GPRO Home Server* folder
 - Navigate to *GPRO Home Server* folder and run terminal command `composer install`
 
+## Updates
+After updating *GPRO Home Server* run terminal command `composer install`
+
 ## Configuration
 - Rename `config.example.php` to `config.php`
   - Open `config.php` with Notepad, set `USERNAME` & `PASSWORD`
