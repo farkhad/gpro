@@ -402,6 +402,8 @@ class RaceAnalysisParser
             'ot' => (int) trim($matches['OT']),
             'df' => (int) trim($matches['DF']),
             'mf' => (int) trim($matches['MF']),
+            'ct_dry' => (int) trim($matches['CTDry']),
+            'ct_wet' => (int) trim($matches['CTWet']),
             'ot_init_blocked' => (int) trim(strip_tags($matches['otInitBlocked'])),
             'ot_init_success' => (int) trim(strip_tags($matches['otInitSuccess'])),
             'ot_uponyou_blocked' => (int) trim(strip_tags($matches['otUponYouBlocked'])),

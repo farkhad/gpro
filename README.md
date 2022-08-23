@@ -2,7 +2,10 @@
 ![](screenshots/home.png)
 
 ## Features
-- Automatically download post Race Analysis as HTML file
+- Automatically download Post Race Data
+  - Race Analysis in HTML format
+  - Race Analysis in JSON format
+  - Light Race Replay in HTML format
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
 - Find Driver's Profile
@@ -18,15 +21,19 @@
 - Extract zip to preferred *GPRO Home Server* folder
 - Navigate to *GPRO Home Server* folder and run terminal command `composer install`
 
-## Updates
-After updating *GPRO Home Server* run terminal command `composer install`
+## Update
+- Make backup of *GPRO Home Server* folder
+- Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
+- Extract zip to *GPRO Home Server* folder
+- Navigate to *GPRO Home Server* folder and run terminal command `composer install`
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
   - Open `config.php` with Notepad, set `USERNAME` & `PASSWORD`
-- Open `postrace.bat`, `homeserver.bat` with Notepad
-  - Set path to *GPRO Home Server* folder
-  - Setup Windows Scheduler to run `postrace.bat` after every race
+- Rename `homeserver.example.bat` to `homeserver.bat`, and `postrace.example.bat` to `postrace.bat`
+  - Open `postrace.bat`, `homeserver.bat` with Notepad
+    - Set path to *GPRO Home Server* folder
+    - Setup Windows Scheduler to run `postrace.bat` after every race
 
 ## Usage
 ### Automatically
@@ -44,7 +51,7 @@ Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost
 - http://localhost:8000/find-td.php Find tech director
 
 ## Screenshots
-### Download Race Analysis
+### Download Post Race Data
 ![](screenshots/postrace.png)
 ### Download Market Database
 ![](screenshots/market.png)
