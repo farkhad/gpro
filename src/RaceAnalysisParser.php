@@ -445,12 +445,12 @@ class RaceAnalysisParser
                 'WEI' => (int) $matches['WEIDiff'],
             ],
             'energy' => [
-                'before_q1' => (int) trim(strip_tags($matches['energyBeforeQ1']), '%'),
-                'after_q1' => (int) trim(strip_tags($matches['energyAfterQ1']), '%'),
-                'before_q2' => (int) trim(strip_tags($matches['energyBeforeQ2']), '%'),
-                'after_q2' => (int) trim(strip_tags($matches['energyAfterQ2']), '%'),
-                'before_race' => (int) trim(strip_tags($matches['energyBeforeRace']), '%'),
-                'after_race' => (int) trim(strip_tags($matches['energyAfterRace']), '%'),
+                'before_q1' => (int) str_replace('%', '', strip_tags($matches['energyBeforeQ1'])),
+                'after_q1' => (int) str_replace('%', '', strip_tags($matches['energyAfterQ1'])),
+                'before_q2' => (int) str_replace('%', '', strip_tags($matches['energyBeforeQ2'])),
+                'after_q2' => (int) str_replace('%', '', strip_tags($matches['energyAfterQ2'])),
+                'before_race' => (int) str_replace('%', '', strip_tags($matches['energyBeforeRace'])),
+                'after_race' => (int) str_replace('%', '', strip_tags($matches['energyAfterRace'])),
             ],
         ];
         $this->car['P'] = (int) $matches['P'];
@@ -532,8 +532,7 @@ class RaceAnalysisParser
         $mAfterPitStops = [];
         $pattern = '|<p>.+?>(?<finishTyres>[0-9]+?)%<.+?</p>.*?'
             . '<p>.+?>(?<finishFuel>[0-9]+?) .+?</p>|is';
-        if (1 === preg_match($pattern, $blockAfterPitstops, $mAfterPitStops)) {
-            print_r($mAfterPitStops);
+        if (preg_match($pattern, $blockAfterPitstops, $mAfterPitStops)) {
             $this->race['finish_tyres'] = (int) $mAfterPitStops['finishTyres'];
             $this->race['finish_fuel'] = (int) $mAfterPitStops['finishFuel'];
         }
