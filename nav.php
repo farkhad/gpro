@@ -26,7 +26,7 @@ function linkAttr($page, $currentPage)
     <li class="nav-item dropdown">
         <a class="nav-link <?= in_array($page, ['postrace', 'market']) ? 'active' : '' ?> dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><i class="fa-solid fa-download"></i> Download</a>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="postrace.php">Latest Race Analysis</a></li>
+            <li><a class="dropdown-item" href="postrace.php">Latest Post Race Data</a></li>
             <li><a class="dropdown-item" href="market.php">Latest Market Database</a></li>
         </ul>
     </li>

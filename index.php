@@ -14,7 +14,7 @@ $seasons = array_slice($seasons, 0, 2);
 
 $raceAnalysisFiles = [];
 array_walk($seasons, function (&$season) use ($seasonFolder, &$raceAnalysisFiles) {
-    $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*.html');
+    $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*[!replay].html');
 
     $season = str_replace($seasonFolder, '', $season);
     $raceAnalysisFiles[$season] = $seasonRaceAnalysisFiles;
@@ -47,7 +47,7 @@ include 'nav.php';
 ?>
 <div class="row mb-3">
     <div class="col">
-        <a href="postrace.php">Download</a> latest Race Analysis.
+        <a href="postrace.php">Download</a> latest Post Race data.
     </div>
     <div class="col">
         <a href="market.php">Download</a> latest Market Database.
@@ -55,17 +55,39 @@ include 'nav.php';
 </div>
 <div class="row">
     <div class="col">
-        Race Analysis from Latest 2 Seasons
+        Post Race Data from Latest 2 Seasons
         <ul>
             <?php foreach ($raceAnalysisFiles as $season => $seasonRaceAnalysisFiles) : ?>
-            <li>Season <?=$season?>
+            <li>Season <?= $season ?>
                 <ul>
                     <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
 <?php
 $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
-$raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile)
+$raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile);
+
+$raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
+$raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
+
+if (!file_exists($raceReplayFile)) {
+    unset($raceReplayFile);
+}
+
+if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
+    $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $matches[1] . '.json';
+    if (!file_exists($jsonFile)) {
+        unset($jsonFile);
+    }
+}
 ?>
-                        <li><a href="<?=$seasonRaceAnalysisFile?>" target="_blank"><?=$raceAnalysisFile?></a>
+                        <li>
+                            <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?=$raceAnalysisFile?></a>
+                            <?php if (!empty($jsonFile)) : ?>
+                                <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
+                            <?php endif; ?>
+                            <?php if (!empty($raceReplayFile)) : ?>
+                                <sup><a href="<?= $raceReplayFile ?>" target="_blank">Replay</a></sup>
+                            <?php endif; ?>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </li>
