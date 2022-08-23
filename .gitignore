@@ -1,3 +1,5 @@
 .editorconfig
 vendor
 config.php
+homeserver.bat
+postrace.bat
