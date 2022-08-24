@@ -15,6 +15,13 @@ $seasons = array_slice($seasons, 0, 2);
 $raceAnalysisFiles = [];
 array_walk($seasons, function (&$season) use ($seasonFolder, &$raceAnalysisFiles) {
     $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*[!replay].html');
+    usort($seasonRaceAnalysisFiles, function ($a, $b) {
+        $pattern = '/S[0-9]+?R([0-9]+)/';
+        preg_match($pattern, $a, $mA);
+        preg_match($pattern, $b, $mB);
+
+        return $mB[1] <=> $mA[1];
+    });
 
     $season = str_replace($seasonFolder, '', $season);
     $raceAnalysisFiles[$season] = $seasonRaceAnalysisFiles;
