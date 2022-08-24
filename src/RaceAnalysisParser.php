@@ -2,12 +2,12 @@
 
 /**
  *
- * Parse Race Analysis into Array of Data
+ * Parse Race Analysis page into Array of Data
  */
 
 namespace Gpro;
 
-class RaceAnalysisParser
+class RaceAnalysisParser extends PageParser
 {
     public array $practiceLaps = [];
     public array $car = [];
@@ -20,11 +20,26 @@ class RaceAnalysisParser
     public array $tyreSupplier = [];
     public array $finances = [];
 
-    public function __construct(public string $subject)
+    public function parse()
     {
         $this->parsePracticeLaps();
         $this->parseCarAndLapInfo();
         $this->parseRaceInfo();
+    }
+
+    public function toArray()
+    {
+        return [
+            'practice' => $this->practiceLaps,
+            'car' => $this->car,
+            'q1' => $this->q1,
+            'q2' => $this->q2,
+            'race' => $this->race,
+            'weather' => $this->weather,
+            'driver' => $this->driver,
+            'tyre_supplier' => $this->tyreSupplier,
+            'finances' => $this->finances,
+        ];
     }
 
     public function parsePracticeLaps()
@@ -204,11 +219,11 @@ class RaceAnalysisParser
 
                 $this->lapInfo[$i] = [
                     'time' => trim(strip_tags($matches['lapTime'][$i])),
-                    'pos' => trim(strip_tags($matches['pos'][$i])),
+                    'pos' => (int) trim(strip_tags($matches['pos'][$i])),
                     // 'tyres' => trim(strip_tags($matches['tyres'][$i])),
                     // 'weather' => trim(strip_tags($matches['weather'][$i])),
-                    'temp' => str_replace(['&#176;', '°'], ['', ''], $temp),
-                    'hum' => str_replace('%', '', $hum),
+                    'temp' => (int) str_replace(['&#176;', '°'], ['', ''], $temp),
+                    'hum' => (int) str_replace('%', '', $hum),
                     'events' => trim(strip_tags($matches['events'][$i])),
                 ];
             }
@@ -552,27 +567,5 @@ class RaceAnalysisParser
                 ];
             }
         }
-    }
-
-    public function toArray()
-    {
-        $data = [
-            'practice' => $this->practiceLaps,
-            'car' => $this->car,
-            'q1' => $this->q1,
-            'q2' => $this->q2,
-            'race' => $this->race,
-            'weather' => $this->weather,
-            'driver' => $this->driver,
-            'tyre_supplier' => $this->tyreSupplier,
-            'finances' => $this->finances,
-        ];
-
-        return $data;
-    }
-
-    public function toJSON()
-    {
-        return json_encode($this->toArray());
     }
 }
