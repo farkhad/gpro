@@ -5,6 +5,10 @@
  */
 const MARKET_FILES_LIMIT = 5;
 
+function isRaceAnalysisFile($element) {
+    return preg_match("/(?<!\.replay)\.html$/", $element);
+}
+
 $seasonFolder = 'seasons' . DIRECTORY_SEPARATOR;
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 
@@ -14,7 +18,9 @@ $seasons = array_slice($seasons, 0, 2);
 
 $raceAnalysisFiles = [];
 array_walk($seasons, function (&$season) use ($seasonFolder, &$raceAnalysisFiles) {
-    $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*[!replay].html');
+    $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*.html');
+    $seasonRaceAnalysisFiles = array_filter($seasonRaceAnalysisFiles, 'isRaceAnalysisFile');
+
     usort($seasonRaceAnalysisFiles, function ($a, $b) {
         $pattern = '/S[0-9]+?R([0-9]+)/';
         preg_match($pattern, $a, $mA);
