@@ -18,6 +18,7 @@
 <body class="m-5">
     <?php include 'nav.php'; ?>
     <?= $content ?>
+    <div class="fixed-bottom text-center text-black-50 py-3">Developed by <a class="text-black-50" href="https://www.github.com/farkhad" target="_blank">Farkhad Rakhimzhanov</a></div>
 </body>
 
 </html>
