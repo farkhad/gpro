@@ -4,7 +4,7 @@
 ## Features
 - Automatically download Post Race Data
   - Race Analysis in HTML format
-  - Race Analysis in JSON format
+  - Race Analysis + Staff & Facilities in JSON format
   - Light Race Replay in HTML format
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track

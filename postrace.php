@@ -6,6 +6,7 @@
  */
 
 use Gpro\RaceAnalysisParser;
+use Gpro\StaffAndFacilitiesParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
 
@@ -45,7 +46,14 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
 
     $raceAnalysisFileJSON = $seasonFolder . DIRECTORY_SEPARATOR
     . 'S' . $season . 'R' . $race . '.json';
-    file_put_contents($raceAnalysisFileJSON, (new RaceAnalysisParser($postraceHtml))->toJSON());
+
+    $raceAnalysis = new RaceAnalysisParser($postraceHtml);
+
+    // Add Staff and Facilities information to Race Analysis JSON file
+    $sfHtml = $client->get('StaffAndFacilities.asp')->getBody();
+    $raceAnalysis->sf = (new StaffAndFacilitiesParser($sfHtml))->toArray();
+
+    file_put_contents($raceAnalysisFileJSON, $raceAnalysis->toJSON());
 
     $raceAnalysisFile = $seasonFolder . DIRECTORY_SEPARATOR
         . 'S' . $season . 'R' . $race . '_' . $trackName . '.html';
