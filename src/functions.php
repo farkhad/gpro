@@ -18,5 +18,6 @@ function renderView(string $view, array $data = []) : string|bool
 }
 
 function isRaceAnalysisFile($element) {
-    return preg_match("/(?<!\.replay)\.html$/", $element);
+    $pattern = '|S[0-9]+?R[0-9]+?[_ ]{1}[^_\.]+?\.html$|';
+    return preg_match($pattern, $element);
 }

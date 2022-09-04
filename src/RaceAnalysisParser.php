@@ -20,6 +20,7 @@ class RaceAnalysisParser extends PageParser
     public array $tyreSupplier = [];
     public array $finances = [];
     public array $sf = [];
+    public array $sponsors = [];
 
     public function parse()
     {
@@ -41,6 +42,7 @@ class RaceAnalysisParser extends PageParser
             'tyre_supplier' => $this->tyreSupplier,
             'finances' => $this->finances,
             'sf' => $this->sf,
+            'sponsors' => $this->sponsors,
         ];
     }
 

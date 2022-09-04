@@ -6,6 +6,7 @@
  */
 
 use Gpro\RaceAnalysisParser;
+use Gpro\SponsorsParser;
 use Gpro\StaffAndFacilitiesParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
@@ -45,7 +46,7 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
     }
 
     $raceAnalysisFileJSON = $seasonFolder . DIRECTORY_SEPARATOR
-    . 'S' . $season . 'R' . $race . '.json';
+        . 'S' . $season . 'R' . $race . '.json';
 
     $raceAnalysis = new RaceAnalysisParser($postraceHtml);
 
@@ -53,15 +54,31 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
     $sfHtml = $client->get('StaffAndFacilities.asp')->getBody();
     $raceAnalysis->sf = (new StaffAndFacilitiesParser($sfHtml))->toArray();
 
+    // Add Sponsors information to Race Analysis JSON file
+    $sponsorsHtml = $client->get('NegotiationsOverview.asp')->getBody();
+    $raceAnalysis->sponsors = (new SponsorsParser($sponsorsHtml))->toArray();
+
     file_put_contents($raceAnalysisFileJSON, $raceAnalysis->toJSON());
 
+    // Store Race Analysis HTML page
     $raceAnalysisFile = $seasonFolder . DIRECTORY_SEPARATOR
         . 'S' . $season . 'R' . $race . '_' . $trackName . '.html';
     $postraceHtml = preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $postraceHtml);
     file_put_contents($raceAnalysisFile, $postraceHtml);
 
+    // Store Staff & Facilities HTML page
+    $sfFile = $seasonFolder . DIRECTORY_SEPARATOR
+        . 'S' . $season . 'R' . $race . '_SF_.html';
+    file_put_contents($sfFile, preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $sfHtml));
+
+    // Store Sponsors HTML page
+    $sponsorsFile = $seasonFolder . DIRECTORY_SEPARATOR
+    . 'S' . $season . 'R' . $race . '_Sponsors_.html';
+    file_put_contents($sponsorsFile, preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $sponsorsHtml));
+
+    // Store Light Race Replay HTML page
     $raceReplayFile = $seasonFolder . DIRECTORY_SEPARATOR
-    . 'S' . $season . 'R' . $race . '_' . $trackName . '.replay.html';
+        . 'S' . $season . 'R' . $race . '_' . $trackName . '.replay.html';
     $raceReplay = $client->get('RaceReplay_light.asp?laps=all&Group=' . urlencode($myGroup))->getBody();
     file_put_contents($raceReplayFile, $raceReplay);
 
@@ -70,6 +87,8 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
         . '<li><a href="' . $raceAnalysisFile . '" target="_blank">' . $raceAnalysisFile . "</a></li>\n"
         . '<li><a href="' . $raceAnalysisFileJSON . '" target="_blank">' . $raceAnalysisFileJSON . "</a></li>\n"
         . '<li><a href="' . $raceReplayFile . '" target="_blank">' . $raceReplayFile . "</a></li>\n"
+        . '<li><a href="' . $sfFile . '" target="_blank">' . $sfFile . "</a></li>\n"
+        . '<li><a href="' . $sponsorsFile . '" target="_blank">' . $sponsorsFile . "</a></li>\n"
         . "</ul>\n";
 } else {
     $message = "\nCannot find Season/Race html code.\n";
