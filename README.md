@@ -36,13 +36,16 @@
 - Rename `homeserver.example.bat` to `homeserver.bat`, and `postrace.example.bat` to `postrace.bat`
   - Open `postrace.bat`, `homeserver.bat` with Notepad
     - Set path to *GPRO Home Server* folder
-    - Setup Windows Scheduler to run `postrace.bat` after every race
+    - Setup [Windows Task Scheduler](https://en.wikipedia.org/wiki/Windows_Task_Scheduler) to run `postrace.bat` after every race
 
 ## Usage
 ### Automatically
-Launch `homeserver.bat` 
+- Launch `homeserver.bat` 
 
 When you are finished working on *GPRO Home Server*, press `CTRL+C` and type `Y` in the opened terminal window
+- Launch `postrace.bat` after every race &mdash; it will download post race data. 
+
+Alternatively, setup Windows Task Scheduler to run `postrace.bat` after every race.
 
 ### Manually
 Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost:8000`

@@ -10,6 +10,7 @@ use Gpro\SponsorsParser;
 use Gpro\StaffAndFacilitiesParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
+use GuzzleHttp\RequestOptions;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config.php';
@@ -30,6 +31,11 @@ $response = $client->post('Login.asp?Redirect=RaceAnalysis.asp', [
         'LogonFake' => 'Login',
     ],
     'allow_redirects' => true,
+    [
+        RequestOptions::HEADERS => [
+            'User-Agent' => \GPRO_UA
+        ],
+    ],
 ]);
 $postraceHtml = $response->getBody();
 
@@ -51,11 +57,25 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
     $raceAnalysis = new RaceAnalysisParser($postraceHtml);
 
     // Add Staff and Facilities information to Race Analysis JSON file
-    $sfHtml = $client->get('StaffAndFacilities.asp')->getBody();
+    $sfHtml = $client->get(
+        'StaffAndFacilities.asp',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody();
     $raceAnalysis->sf = (new StaffAndFacilitiesParser($sfHtml))->toArray();
 
     // Add Sponsors information to Race Analysis JSON file
-    $sponsorsHtml = $client->get('NegotiationsOverview.asp')->getBody();
+    $sponsorsHtml = $client->get(
+        'NegotiationsOverview.asp',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody();
     $raceAnalysis->sponsors = (new SponsorsParser($sponsorsHtml))->toArray();
 
     file_put_contents($raceAnalysisFileJSON, $raceAnalysis->toJSON());
@@ -79,7 +99,14 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
     // Store Light Race Replay HTML page
     $raceReplayFile = $seasonFolder . DIRECTORY_SEPARATOR
         . 'S' . $season . 'R' . $race . '_' . $trackName . '.replay.html';
-    $raceReplay = $client->get('RaceReplay_light.asp?laps=all&Group=' . urlencode($myGroup))->getBody();
+    $raceReplay = $client->get(
+        'RaceReplay_light.asp?laps=all&Group=' . urlencode($myGroup),
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody();
     file_put_contents($raceReplayFile, $raceReplay);
 
     $message = "\nPost Race data has been downloaded: \n"

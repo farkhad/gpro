@@ -7,6 +7,7 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
+use GuzzleHttp\RequestOptions;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config.php';
@@ -27,10 +28,31 @@ $response = $client->post('Login.asp?Redirect=gpro.asp', [
         'LogonFake' => 'Login',
     ],
     'allow_redirects' => true,
+    RequestOptions::HEADERS => [
+        'User-Agent' => \GPRO_UA
+    ],
 ]);
 
-$json = gzdecode($client->get('GetMarketFile.asp?market=drivers&type=json')->getBody());
-$jsonTechDirectors = gzdecode($client->get('GetMarketFile.asp?market=tds&type=json')->getBody());
+$json = gzdecode(
+    $client->get(
+        'GetMarketFile.asp?market=drivers&type=json',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody()
+);
+$jsonTechDirectors = gzdecode(
+    $client->get(
+        'GetMarketFile.asp?market=tds&type=json',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody()
+);
 
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 $marketFile = $marketFolder . date('Y-m-d') . '.php';
