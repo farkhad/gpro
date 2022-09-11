@@ -10,6 +10,8 @@ namespace Gpro;
 // TODO communications from sponsor staff, attach question itself
 class SponsorsParser extends PageParser
 {
+    public array $contracts = [];
+    public array $negotiations = [];
 
     public function parse()
     {
