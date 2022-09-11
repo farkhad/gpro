@@ -5,6 +5,7 @@
  * Fetch raw post race analysis seasons/SS/SXXRYY TrackName.html
  */
 
+use Gpro\CCPParser;
 use Gpro\RaceAnalysisParser;
 use Gpro\SponsorsParser;
 use Gpro\StaffAndFacilitiesParser;
@@ -78,6 +79,17 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
     )->getBody();
     $raceAnalysis->sponsors = (new SponsorsParser($sponsorsHtml))->toArray();
 
+    // Add CCP information to Race Analysis JSON file
+    $testingHtml = $client->get(
+        'Testing.asp',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody();
+    $raceAnalysis->carPoints = (new CCPParser($testingHtml))->toArray();
+
     file_put_contents($raceAnalysisFileJSON, $raceAnalysis->toJSON());
 
     // Store Race Analysis HTML page
@@ -93,8 +105,13 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
 
     // Store Sponsors HTML page
     $sponsorsFile = $seasonFolder . DIRECTORY_SEPARATOR
-    . 'S' . $season . 'R' . $race . '_Sponsors_.html';
+        . 'S' . $season . 'R' . $race . '_Sponsors_.html';
     file_put_contents($sponsorsFile, preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $sponsorsHtml));
+
+    // Store Testing HTML page
+    $testingFile = $seasonFolder . DIRECTORY_SEPARATOR
+        . 'S' . $season . 'R' . $race . '_Testing_.html';
+    file_put_contents($testingFile, preg_replace('/src=["\']{1}.+?["\']{1}/is', '', $testingHtml));
 
     // Store Light Race Replay HTML page
     $raceReplayFile = $seasonFolder . DIRECTORY_SEPARATOR
@@ -116,6 +133,7 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
         . '<li><a href="' . $raceReplayFile . '" target="_blank">' . $raceReplayFile . "</a></li>\n"
         . '<li><a href="' . $sfFile . '" target="_blank">' . $sfFile . "</a></li>\n"
         . '<li><a href="' . $sponsorsFile . '" target="_blank">' . $sponsorsFile . "</a></li>\n"
+        . '<li><a href="' . $testingFile . '" target="_blank">' . $testingFile . "</a></li>\n"
         . "</ul>\n";
 } else {
     $message = "\nCannot find Season/Race html code.\n";

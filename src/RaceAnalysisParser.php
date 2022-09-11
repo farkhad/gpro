@@ -21,6 +21,7 @@ class RaceAnalysisParser extends PageParser
     public array $finances = [];
     public array $sf = [];
     public array $sponsors = [];
+    public array $carPoints = [];
 
     public function parse()
     {
@@ -31,6 +32,8 @@ class RaceAnalysisParser extends PageParser
 
     public function toArray()
     {
+        $this->car['points'] = $this->carPoints;
+
         return [
             'practice' => $this->practiceLaps,
             'car' => $this->car,
