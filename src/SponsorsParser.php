@@ -73,7 +73,7 @@ class SponsorsParser extends PageParser
             . '<td.+?>(?<amount>.+?)</td>.+?'
             . '<td.+?>(?<duration>.+?)</td>.+?'
             . '<td.+?>(?<progress>.+?)</td>.+?'
-            . '<td.+?>.+?<span.+?>(?<priority>.+?)</span>.+?</td>.+?'
+            . '<td.+?>.+?<option value="(?<priority>.+?)" selected>.+?</td>.+?'
             . '<td.+?>(?<contested>.+?)</td>.+?'
             . '<td.+?>(?<avg_progress>.+?)</td>'
             . '|is';
@@ -85,10 +85,10 @@ class SponsorsParser extends PageParser
             foreach ($matches['name'] as $i => $name) {
                 $id = '-';
                 $name = trim(str_replace('&nbsp;', '', $name));
-                $question = false;
+                $attention = false;
                 if (preg_match('/"NegotiateSponsor.asp\?ID=([0-9]+?)"/i', $name, $mName)) {
                     $id = (int) $mName[1];
-                    $question = substr_count($name, '<img') > 0;
+                    $attention = substr_count($name, '<img') > 0;
                     $name = strip_tags($name);
                 }
 
@@ -105,7 +105,7 @@ class SponsorsParser extends PageParser
                 $this->negotiations[] = [
                     'id' => $id,
                     'name' => $name,
-                    'question' => $question,
+                    'attention' => $attention,
                     'spot' => trim(strip_tags($matches['spot'][$i])),
                     'duration' => trim(strip_tags($matches['duration'][$i])),
                     'progress' => (float) str_replace('%', '', trim(strip_tags($matches['progress'][$i]))),
