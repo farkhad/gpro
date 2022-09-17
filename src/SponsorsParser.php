@@ -7,7 +7,7 @@
 
 namespace Gpro;
 
-// TODO communications from sponsor staff, attach question itself
+// TODO communications from sponsor staff
 class SponsorsParser extends PageParser
 {
     public array $contracts = [];
@@ -59,6 +59,7 @@ class SponsorsParser extends PageParser
                 $this->contracts[] = [
                     'id' => $id,
                     'name' => $name,
+                    'attributes' => [],
                     'spot' => trim($spot),
                     'amount' => $amount,
                     'status' => trim(strip_tags($matches['status'][$i])),
@@ -105,7 +106,9 @@ class SponsorsParser extends PageParser
                 $this->negotiations[] = [
                     'id' => $id,
                     'name' => $name,
+                    'attributes' => [],
                     'attention' => $attention,
+                    'feedback' => '',
                     'spot' => trim(strip_tags($matches['spot'][$i])),
                     'duration' => trim(strip_tags($matches['duration'][$i])),
                     'progress' => (float) str_replace('%', '', trim(strip_tags($matches['progress'][$i]))),

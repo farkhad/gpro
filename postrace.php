@@ -7,6 +7,7 @@
 
 use Gpro\CCPParser;
 use Gpro\RaceAnalysisParser;
+use Gpro\SponsorParser;
 use Gpro\SponsorsParser;
 use Gpro\StaffAndFacilitiesParser;
 use GuzzleHttp\Client;
@@ -77,7 +78,39 @@ if (preg_match($pattern, $postraceHtml, $matches)) {
             ],
         ]
     )->getBody();
-    $raceAnalysis->sponsors = (new SponsorsParser($sponsorsHtml))->toArray();
+    $sponsorsParser = new SponsorsParser($sponsorsHtml);
+    foreach ($sponsorsParser->negotiations as $i => $negotiation) {
+        $sponsorUrl = 'NegotiateSponsor.asp?ID=' . $negotiation['id'];
+        $sponsorHtml = $client->get(
+            $sponsorUrl,
+            [
+                RequestOptions::HEADERS => [
+                    'User-Agent' => \GPRO_UA
+                ],
+            ]
+        )->getBody();
+        $sponsorParser = new SponsorParser($sponsorHtml);
+        $sponsorsParser->negotiations[$i]['attributes'] = $sponsorParser->attributes;
+        $sponsorsParser->negotiations[$i]['feedback'] = $sponsorParser->feedback;
+    }
+    foreach ($sponsorsParser->contracts as $i => $contract) {
+        if (!is_int($contract['id'])) {
+            continue;
+        }
+
+        $sponsorUrl = 'NegotiateSponsor.asp?ID=' . $contract['id'];
+        $sponsorHtml = $client->get(
+            $sponsorUrl,
+            [
+                RequestOptions::HEADERS => [
+                    'User-Agent' => \GPRO_UA
+                ],
+            ]
+        )->getBody();
+        $sponsorParser = new SponsorParser($sponsorHtml);
+        $sponsorsParser->contracts[$i]['attributes'] = $sponsorParser->attributes;
+    }
+    $raceAnalysis->sponsors = $sponsorsParser->toArray();
 
     // Add CCP information to Race Analysis JSON file
     $testingHtml = $client->get(
