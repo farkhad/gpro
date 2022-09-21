@@ -7,23 +7,25 @@
 
 namespace Gpro;
 
-// TODO communications from sponsor staff
 class SponsorsParser extends PageParser
 {
     public array $contracts = [];
     public array $negotiations = [];
+    public array $communications = [];
 
     public function parse()
     {
         $pattern = '|<form action="NegotiationsOverview.asp".+?'
             . '<table.+?>(?<contracts>.+?)</table>.+?'
-            . '<TABLE id="ongnegsTable".+?>(?<negotiations>.+?)<tr class="static">'
+            . '<TABLE id="ongnegsTable".+?>(?<negotiations>.+?)<tr class="static">.+?'
+            . '<table.+?data-step="5".+?>(?<communications>.+?)</table>'
             . '|is';
         if (!preg_match($pattern, $this->subject, $matches)) {
             return false;
         }
         $contracts = $matches['contracts'];
         $negotiations = $matches['negotiations'];
+        $communications = $matches['communications'];
 
         $pattern = '|<td.+?>(?<name>.+?)</td>.+?'
             . '<td.+?>(?<spot>.+?)</td>.+?'
@@ -120,6 +122,27 @@ class SponsorsParser extends PageParser
                 ];
             }
         }
+
+        $pattern = '|<tr onmouseover.+?>.+?'
+            . '<td class="center".+?</td>.+?'
+            . '<td class="center".+?>(?<race>.+?)</td>.+?'
+            . '<td style="">(?<event>.+?)</td>.+?</tr>'
+            . '|is';
+
+        $matches = [];
+
+        if (preg_match_all($pattern, $communications, $matches)) {
+            $this->communications = [];
+            foreach ($matches['race'] as $i => $race) {
+                $race = trim(str_replace('&nbsp;', ' ', $race));
+                $event = trim(strip_tags($matches['event'][$i]));
+
+                $this->communications[] = [
+                    'race' => $race,
+                    'event' => $event,
+                ];
+            }
+        }
     }
 
     public function toArray()
@@ -127,6 +150,7 @@ class SponsorsParser extends PageParser
         return [
             'contracts' => $this->contracts,
             'negotiations' => $this->negotiations,
+            'communications' => $this->communications,
         ];
     }
 }
