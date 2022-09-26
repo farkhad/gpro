@@ -16,7 +16,7 @@
                     <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
 <?php
 $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
-$raceAnalysisFile = preg_replace('/[^' . $dirSeparator . ']+?' . $dirSeparator . '/is', '', $seasonRaceAnalysisFile);
+$raceAnalysisFile = preg_replace('|[^' . $dirSeparator . ']+?' . $dirSeparator . '|is', '', $seasonRaceAnalysisFile);
 
 $raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
 $raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
