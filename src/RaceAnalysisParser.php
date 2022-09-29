@@ -220,6 +220,7 @@ class RaceAnalysisParser extends PageParser
         $matches = [];
 
         if (preg_match_all($pattern, $lapInfo, $matches)) {
+            $nextBoostLaps = 0;
             foreach ($matches['lap'] as $i => $lap) {
                 $hum = trim(strip_tags($matches['hum'][$i]));
                 $temp = trim(strip_tags($matches['temp'][$i]));
@@ -233,6 +234,16 @@ class RaceAnalysisParser extends PageParser
                     'hum' => (int) str_replace('%', '', $hum),
                     'events' => trim(strip_tags($matches['events'][$i])),
                 ];
+
+                if ($nextBoostLaps > 0) {
+                    $nextBoostLaps--;
+                    $this->lapInfo[$i]['boost'] = true;
+                }
+
+                if (preg_match("|<sup>.+?</sup>|is", $lap)) {
+                    $this->lapInfo[$i]['boost'] = true;
+                    $nextBoostLaps = 2;
+                }
             }
         }
     }
