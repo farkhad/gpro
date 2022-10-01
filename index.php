@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Home page
  * Display race analysis, market files
@@ -10,26 +11,30 @@ const MARKET_FILES_LIMIT = 5;
 $seasonFolder = 'seasons' . DIRECTORY_SEPARATOR;
 $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 
-$seasons = glob($seasonFolder . '*', GLOB_ONLYDIR);
-rsort($seasons);
-$seasons = array_slice($seasons, 0, 2);
-
+$users = glob($seasonFolder . '*', GLOB_ONLYDIR);
 $raceAnalysisFiles = [];
-array_walk($seasons, function (&$season) use ($seasonFolder, &$raceAnalysisFiles) {
-    $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*.html');
-    $seasonRaceAnalysisFiles = array_filter($seasonRaceAnalysisFiles, 'isRaceAnalysisFile');
+foreach ($users as $userDir) {
+    $seasons = [];
+    $seasons = glob($userDir . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR);
+    rsort($seasons);
+    $seasons = array_slice($seasons, 0, 2);
 
-    usort($seasonRaceAnalysisFiles, function ($a, $b) {
-        $pattern = '/S[0-9]+?R([0-9]+)/';
-        preg_match($pattern, $a, $mA);
-        preg_match($pattern, $b, $mB);
+    array_walk($seasons, function (&$season) use ($userDir, &$raceAnalysisFiles) {
+        $seasonRaceAnalysisFiles = glob($season . DIRECTORY_SEPARATOR . '*.html');
+        $seasonRaceAnalysisFiles = array_filter($seasonRaceAnalysisFiles, 'isRaceAnalysisFile');
 
-        return $mB[1] <=> $mA[1];
+        usort($seasonRaceAnalysisFiles, function ($a, $b) {
+            $pattern = '/S[0-9]+?R([0-9]+)/';
+            preg_match($pattern, $a, $mA);
+            preg_match($pattern, $b, $mB);
+
+            return $mB[1] <=> $mA[1];
+        });
+
+        $season = str_replace($userDir . DIRECTORY_SEPARATOR, '', $season);
+        $raceAnalysisFiles[$userDir][$season] = $seasonRaceAnalysisFiles;
     });
-
-    $season = str_replace($seasonFolder, '', $season);
-    $raceAnalysisFiles[$season] = $seasonRaceAnalysisFiles;
-});
+}
 
 $marketFiles = glob($marketFolder . '[!TD]*.php');
 rsort($marketFiles);

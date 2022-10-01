@@ -9,44 +9,49 @@
 <div class="row">
     <div class="col">
         Post Race Data from Latest 2 Seasons
-        <ul>
-            <?php foreach ($raceAnalysisFiles as $season => $seasonRaceAnalysisFiles) : ?>
-                <li>Season <?= $season ?>
-                    <ul>
-                        <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
-                            <?php
-                            $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
-                            $raceAnalysisFile = preg_replace('|[^' . $dirSeparator . ']+?' . $dirSeparator . '|is', '', $seasonRaceAnalysisFile);
 
-                            $raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
-                            $raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
+        <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
+            <h3><?= str_replace('seasons' . DIRECTORY_SEPARATOR, '', $userDir) ?></h3>
+            <ul>
+                <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
+                    <li>Season <?= $season ?>
+                        <ul>
+                            <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
+                                <?php
+                                $seasonFolder = $userDir . DIRECTORY_SEPARATOR;
+                                $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
+                                $raceAnalysisFile = preg_replace('|[^' . $dirSeparator . ']+?' . $dirSeparator . '|is', '', $seasonRaceAnalysisFile);
 
-                            if (!file_exists($raceReplayFile)) {
-                                unset($raceReplayFile);
-                            }
+                                $raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
+                                $raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
 
-                            if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
-                                $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $matches[1] . '.json';
-                                if (!file_exists($jsonFile)) {
-                                    unset($jsonFile);
+                                if (!file_exists($raceReplayFile)) {
+                                    unset($raceReplayFile);
                                 }
-                            }
-                            ?>
-                            <li>
-                                <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
-                                <?php if (!empty($jsonFile)) : ?>
-                                    <sup><a href="javascript:void(0)" data-bs-json="<?= $jsonFile ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">Laps Graph</a></sup>
-                                    <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
-                                <?php endif; ?>
-                                <?php if (!empty($raceReplayFile)) : ?>
-                                    <sup><a href="<?= $raceReplayFile ?>" target="_blank">Replay</a></sup>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+
+                                if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
+                                    $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $matches[1] . '.json';
+                                    if (!file_exists($jsonFile)) {
+                                        unset($jsonFile);
+                                    }
+                                }
+                                ?>
+                                <li>
+                                    <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
+                                    <?php if (!empty($jsonFile)) : ?>
+                                        <sup><a href="javascript:void(0)" data-bs-json="<?= $jsonFile ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">Laps Graph</a></sup>
+                                        <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
+                                    <?php endif; ?>
+                                    <?php if (!empty($raceReplayFile)) : ?>
+                                        <sup><a href="<?= $raceReplayFile ?>" target="_blank">Replay</a></sup>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endforeach; ?>
     </div>
     <div class="col">
         <?php if (!count($marketFiles)) : ?>
@@ -96,6 +101,8 @@
 <script src="js/chart.min.js"></script>
 <script>
     const lapsModal = document.querySelector('#lapsModal');
+    const charts = [];
+
     lapsModal.addEventListener('show.bs.modal', evt => {
         // Button that triggered the modal
         const button = evt.relatedTarget;
@@ -122,7 +129,11 @@
                 }
             });
 
-            new Chart("chart", {
+            if (charts.length > 0) {
+                charts.pop().destroy();
+            }
+
+            let newChart = new Chart("chart", {
                 type: "line",
                 data: {
                     labels: xValues,
@@ -165,6 +176,8 @@
                     }
                 }
             });
+
+            charts.push(newChart);
         });
     });
 </script>
