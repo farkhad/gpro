@@ -98,7 +98,7 @@
     const lapsModal = document.querySelector('#lapsModal');
     lapsModal.addEventListener('show.bs.modal', evt => {
         // Button that triggered the modal
-        const button = event.relatedTarget;
+        const button = evt.relatedTarget;
         // Extract info from data-bs-* attributes
         const jsonFile = button.getAttribute('data-bs-json');
 
