@@ -33,7 +33,7 @@
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
-  - Open `config.php` with Notepad, set `ACCOUNTS` (one or more)
+  - Open `config.php` with Notepad, set `USERNAME`, `PASSWORD`, and set more `ACCOUNTS` if needed 
 - Rename `homeserver.example.bat` to `homeserver.bat`, and `postrace.example.bat` to `postrace.bat`
   - Open `postrace.bat`, `homeserver.bat` with Notepad
     - Set path to *GPRO Home Server* folder
