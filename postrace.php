@@ -1,4 +1,5 @@
 <?php
+set_time_limit(2 * 60);
 
 /**
  *
@@ -19,6 +20,7 @@ require __DIR__ . '/config.php';
 
 require_once __DIR__ . '/src/functions.php';
 $title = 'Download Post Race Data';
+$message = '';
 
 session_start();
 
@@ -169,7 +171,7 @@ foreach (\ACCOUNTS as $username => $password) {
         )->getBody();
         file_put_contents($raceReplayFile, $raceReplay);
 
-        $message = "\nPost Race data has been downloaded: \n"
+        $message .= "\nPost Race data has been downloaded: \n"
             . "<ul>\n"
             . '<li><a href="' . $raceAnalysisFile . '" target="_blank">' . $raceAnalysisFile . "</a></li>\n"
             . '<li><a href="' . $raceAnalysisFileJSON . '" target="_blank">' . $raceAnalysisFileJSON . "</a></li>\n"
@@ -179,9 +181,8 @@ foreach (\ACCOUNTS as $username => $password) {
             . '<li><a href="' . $testingFile . '" target="_blank">' . $testingFile . "</a></li>\n"
             . "</ul>\n";
     } else {
-        $message = "\nCannot find Season/Race html code.\n";
+        $message .= "\nCannot find Season/Race html code.\n";
     }
-    sleep(1);
 }
 
 if (php_sapi_name() === 'cli') {
