@@ -50,8 +50,14 @@ foreach (\ACCOUNTS as $username => $password) {
             ],
         ],
     ]);
-    $response = $client->get('RaceAnalysis.asp');
-    $postraceHtml = $response->getBody();
+    $postraceHtml = $client->get(
+        'RaceAnalysis.asp',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => \GPRO_UA
+            ],
+        ]
+    )->getBody();
 
     $pattern = '%\<a href\=\"TrackDetails\.asp\?id\=([0-9]+)?">([^<]+?) \(.+?\<\/a\>.+?Season ([0-9]+?) - Race ([0-9]+?) \((?<myGroup>.+?)\)%is';
     if (preg_match($pattern, $postraceHtml, $matches)) {
