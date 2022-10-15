@@ -12,6 +12,9 @@ class RaceAnalysisParser extends PageParser
     public array $practiceLaps = [];
     public array $car = [];
     public array $lapInfo = [];
+    public string $fl;
+    public string $flWet;
+    public array $wetLaps = [];
     public array $driver = [];
     public array $q1 = [];
     public array $q2 = [];
@@ -222,18 +225,43 @@ class RaceAnalysisParser extends PageParser
         if (preg_match_all($pattern, $lapInfo, $matches)) {
             $nextBoostLaps = 0;
             foreach ($matches['lap'] as $i => $lap) {
+                $lapTimeHtml = $matches['lapTime'][$i];
+                $lapTime = trim(strip_tags($lapTimeHtml));
+
+                $lapTimeSeconds = 0;
+                $lapTimeSections = explode(':', $lapTime);
+                if (count($lapTimeSections) > 1) {
+                    $lapTimeSeconds = intval(60 * (int) array_shift($lapTimeSections));
+                }
+                $lapTimeSeconds += floatval(array_shift($lapTimeSections));
+
                 $hum = trim(strip_tags($matches['hum'][$i]));
                 $temp = trim(strip_tags($matches['temp'][$i]));
+                $weather = trim(strip_tags($matches['weather'][$i]));
+                if ($weather === 'Rain') {
+                    if ($i > 0) {
+                        $this->wetLaps[$i] = $lapTimeSeconds;
+                    }
+                    $weather = 'W';
+                } else {
+                    $weather = 'D';
+                }
+
 
                 $this->lapInfo[$i] = [
-                    'time' => trim(strip_tags($matches['lapTime'][$i])),
+                    'time' => trim(strip_tags($lapTime)),
                     'pos' => (int) trim(strip_tags($matches['pos'][$i])),
-                    // 'tyres' => trim(strip_tags($matches['tyres'][$i])),
-                    // 'weather' => trim(strip_tags($matches['weather'][$i])),
+                    'tyres' => trim(strip_tags($matches['tyres'][$i])),
+                    'weather' => $weather,
                     'temp' => (int) str_replace(['&#176;', '°'], ['', ''], $temp),
                     'hum' => (int) str_replace('%', '', $hum),
                     'events' => trim(strip_tags($matches['events'][$i])),
                 ];
+
+                if (preg_match("|lime|is", $lapTimeHtml)) {
+                    $this->lapInfo[$i]['fl'] = true;
+                    $this->fl = $lapTime;
+                }
 
                 if ($nextBoostLaps > 0) {
                     $nextBoostLaps--;
@@ -244,6 +272,11 @@ class RaceAnalysisParser extends PageParser
                     $this->lapInfo[$i]['boost'] = true;
                     $nextBoostLaps = 2;
                 }
+            }
+            if (count($this->wetLaps) > 0) {
+                asort($this->wetLaps);
+                $flWet = array_slice($this->wetLaps, 0, 1, true);
+                $this->flWet = $this->lapInfo[key($flWet)]['time'];
             }
         }
     }
@@ -450,7 +483,12 @@ class RaceAnalysisParser extends PageParser
                 'susp' => (int) $matches['raceSusp'],
             ],
             'laps' => $this->lapInfo,
+            'fl' => $this->fl,
         ];
+        if (count($this->wetLaps) > 0) {
+            $this->race['laps_wet'] = count($this->wetLaps);
+            $this->race['fl_wet'] = $this->flWet;
+        }
 
         $this->driver = [
             'OA' => (int) $matches['OA'],
