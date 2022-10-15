@@ -30,7 +30,8 @@
                                 }
 
                                 if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
-                                    $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $matches[1] . '.json';
+                                    $jsonFileName = $matches[1] . '.json';
+                                    $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $jsonFileName;
                                     if (!file_exists($jsonFile)) {
                                         unset($jsonFile);
                                     }
@@ -39,7 +40,7 @@
                                 <li>
                                     <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
                                     <?php if (!empty($jsonFile)) : ?>
-                                        <sup><a href="javascript:void(0)" data-bs-json="<?= $jsonFile ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">Laps Graph</a></sup>
+                                        <sup><a href="javascript:void(0)" data-bs-season="<?= $season ?>" data-bs-json="<?= $jsonFileName ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">L-Chart</a></sup>
                                         <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
                                     <?php endif; ?>
                                     <?php if (!empty($raceReplayFile)) : ?>
@@ -108,25 +109,83 @@
         const button = evt.relatedTarget;
         // Extract info from data-bs-* attributes
         const jsonFile = button.getAttribute('data-bs-json');
+        const season = button.getAttribute('data-bs-season');
+        <?php
+        $userDirs = array_keys($raceAnalysisFiles);
+        array_walk($userDirs, function (&$userDir) {
+            $userDir = addcslashes($userDir, '\\');
+        });
+        ?>
+        const userDirs = ['<?= implode("','", $userDirs) ?>'];
+        const jsonFiles = [];
+        const datasets = [];
+        // https://html-color.codes/
+        const rgbSet = [
+            [255, 0, 0], // red
+            [128, 0, 128], // purple
+            [255, 165, 0], // orange
+            [0, 0, 255], // blue
+            [238, 210, 2], // yellow (safety)
+            [0, 128, 0], // green
+            [0, 0, 128], // navy
+            // 7
+            [255, 99, 71], // red (tomato)
+            [147, 112, 219], // purple (medium)
+            [255, 140, 0], // orange (dark)
+            [65, 105, 225], // blue (royal)
+            [255, 225, 53], // yellow (banana)
+            [144, 238, 144], // green (light)
+            [0, 0, 205], // navy (medium blue)
+            // 14
+            [233, 150, 122], // red (dark salmon)
+            [123, 104, 238], // purple (medium slate blue)
+            [255, 179, 71], // orange (pastel orange)
+            [100, 149, 237], // blue (cornflower blue)
+            [240, 225, 48], // yellow (dandelion)
+            [143, 188, 143], // green (dark sea green)
+            [50, 74, 178], // navy (violet blue)
+            // 21
+        ];
 
-        $.ajax(jsonFile).done((data) => {
-            const laps = data.race.laps;
-            let xValues = [],
-                yValues = [];
+        const updateJsonFiles = (data) => jsonFiles.push(data);
+        const drawChart = () => {
+            const xValues = [];
+            const colors = rgbSet.slice();
 
-            laps.forEach((el, index) => {
-                let timeSlots = el.time.split(':'); // split it at the colons
-                let seconds = 0.0;
-                if (timeSlots.length === 2) {
-                    seconds = parseInt(timeSlots[0]) * 60 + parseFloat(timeSlots[1]);
-                } else {
-                    seconds = parseFloat(timeSlots[0]);
+            jsonFiles.forEach((data) => {
+                const laps = data.race.laps;
+                let yValues = [];
+
+                laps.forEach((el, index) => {
+                    let timeSlots = el.time.split(':'); // split it at the colons
+                    let seconds = 0.0;
+                    if (timeSlots.length === 2) {
+                        seconds = parseInt(timeSlots[0]) * 60 + parseFloat(timeSlots[1]);
+                    } else {
+                        seconds = parseFloat(timeSlots[0]);
+                    }
+
+                    if (timeSlots[0] !== '-') {
+                        if (index > 0 && xValues.length < (laps.length - 1)) {
+                            xValues.push(index);
+                        }
+                        yValues.push(seconds);
+                    }
+                });
+
+                const rgb = colors.shift();
+                // fallback
+                if (rgb === undefined) {
+                    colors = rgbSet.slice();
+                    rgb = colors.shift();
                 }
 
-                if (timeSlots[0] !== '-') {
-                    xValues.push(index);
-                    yValues.push(seconds);
-                }
+                datasets.push({
+                    label: data.manager,
+                    backgroundColor: `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1.0)`,
+                    borderColor: `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.5)`,
+                    data: yValues
+                });
             });
 
             if (charts.length > 0) {
@@ -137,31 +196,26 @@
                 type: "line",
                 data: {
                     labels: xValues,
-                    datasets: [{
-                        label: 'Lap Time (seconds)',
-                        backgroundColor: "rgba(25,135,84, 1.0)",
-                        borderColor: "rgba(25,135,84, 0.1)",
-                        data: yValues
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     scales: {
                         x: {
+                            beginAtZero: false,
                             title: {
                                 display: true,
                                 text: 'Laps'
                             },
-                            beginAtZero: false,
                             ticks: {
                                 color: 'rgb(0,0,0)'
                             }
                         },
                         y: {
+                            beginAtZero: false,
                             title: {
                                 display: true,
                                 text: 'Lap Time'
                             },
-                            beginAtZero: false,
                             ticks: {
                                 // For a category axis, the val is the index so the lookup via getLabelForValue is needed
                                 callback: function(val, index) {
@@ -173,11 +227,41 @@
                                 color: 'rgb(0,0,0)'
                             }
                         }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Click on rectangles to show/hide lap chart'
+                        }
                     }
                 }
             });
 
             charts.push(newChart);
-        });
+        };
+
+        const loadNextJsonFile = () => {
+            const userDir = userDirs.shift();
+            if (userDir === undefined) {
+                drawChart();
+                return;
+            }
+
+            const jsonUrl = userDir + '/' + season + '/' + jsonFile + '?_=' + new Date().getTime();
+            $.getJSON(jsonUrl)
+                .done((data) => {
+                    data['manager'] = userDir.replace(/^seasons[\\/]/, '');
+                    updateJsonFiles(data);
+
+                    loadNextJsonFile();
+                })
+                .fail((err) => {
+                    loadNextJsonFile();
+                });
+        };
+        loadNextJsonFile();
     });
 </script>
