@@ -9,6 +9,8 @@
   - Staff & Facilities in HTML format
   - Sponsors in HTML format
   - Testing in HTML format
+- Support for Multiple GPRO Accounts
+- Joint Race Laps Analysis (L-Chart) 
 - Attach Car Points Distribution, Staff & Facilities, Sponsors data to Race Analysis JSON file
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
@@ -68,3 +70,5 @@ Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost
 ![](screenshots/profile.png)
 ### Find Tech Director
 ![](screenshots/find-td.png)
+### L-Chart
+![](screenshots/lchart.png)
