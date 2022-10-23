@@ -7,8 +7,8 @@
   - Race Analysis in JSON format
   - Light Race Replay in HTML format
   - Staff & Facilities in HTML format
-  - Sponsors in HTML format
-  - Testing in HTML format
+  - Sponsors in HTML/JSON format
+  - Testing in HTML/JSON format
 - Support for Multiple GPRO Accounts
 - Joint Race Laps Analysis (L-Chart) 
 - Attach Car Points Distribution, Staff & Facilities, Sponsors data to Race Analysis JSON file
