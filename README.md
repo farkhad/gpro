@@ -3,10 +3,9 @@
 
 ## Features
 - Automatically download Post Race Data
-  - Race Analysis in HTML format
-  - Race Analysis in JSON format
+  - Race Analysis in HTML/JSON format
   - Light Race Replay in HTML format
-  - Staff & Facilities in HTML format
+  - Staff & Facilities in HTML/JSON format
   - Sponsors in HTML/JSON format
   - Testing in HTML/JSON format
 - Support for Multiple GPRO Accounts
