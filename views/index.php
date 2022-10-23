@@ -40,7 +40,8 @@
                                 <li>
                                     <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
                                     <?php if (!empty($jsonFile)) : ?>
-                                        <sup><a href="javascript:void(0)" data-bs-season="<?= $season ?>" data-bs-json="<?= $jsonFileName ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">L-Chart</a></sup>
+                                        <sup><a href="javascript:void(0)" data-bs-track="<?=
+                                            preg_replace(['/^.+?_/', '/\.html/'], ['', ''], $raceAnalysisFile) ?>" data-bs-season="<?= $season ?>" data-bs-json="<?= $jsonFileName ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">L-Chart</a></sup>
                                         <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
                                     <?php endif; ?>
                                     <?php if (!empty($raceReplayFile)) : ?>
@@ -84,7 +85,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="lapsModalLabel">Race Laps Analysis</h5>
+                <h5 class="modal-title" id="lapsModalLabel"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -107,6 +108,12 @@
     lapsModal.addEventListener('show.bs.modal', evt => {
         // Button that triggered the modal
         const button = evt.relatedTarget;
+
+        $('#lapsModalLabel').text(
+            button.getAttribute('data-bs-track')
+            + ' Race Laps Analysis'
+        );
+
         // Extract info from data-bs-* attributes
         const jsonFile = button.getAttribute('data-bs-json');
         const season = button.getAttribute('data-bs-season');
