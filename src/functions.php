@@ -18,6 +18,6 @@ function renderView(string $view, array $data = []) : string|bool
 }
 
 function isRaceAnalysisFile($element) {
-    $pattern = '|S[0-9]+?R[0-9]+?[_ ]{1}[^_\.]+?\.html$|';
+    $pattern = '|S[0-9]+?R[0-9]+?[_ ]{1}[^\.]+?[^_]{1}?\.html$|';
     return preg_match($pattern, $element);
 }
