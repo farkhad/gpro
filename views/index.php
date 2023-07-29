@@ -131,37 +131,61 @@
             [255, 0, 0], // red
             [128, 0, 128], // purple
             [255, 165, 0], // orange
-            [0, 0, 255], // blue
+
             [238, 210, 2], // yellow (safety)
-            [0, 128, 0], // green
+
             [0, 0, 128], // navy
             // 7
             [255, 99, 71], // red (tomato)
             [147, 112, 219], // purple (medium)
             [255, 140, 0], // orange (dark)
-            [65, 105, 225], // blue (royal)
+
             [255, 225, 53], // yellow (banana)
-            [144, 238, 144], // green (light)
+
             [0, 0, 205], // navy (medium blue)
             // 14
             [233, 150, 122], // red (dark salmon)
             [123, 104, 238], // purple (medium slate blue)
             [255, 179, 71], // orange (pastel orange)
-            [100, 149, 237], // blue (cornflower blue)
+
             [240, 225, 48], // yellow (dandelion)
-            [143, 188, 143], // green (dark sea green)
+
             [50, 74, 178], // navy (violet blue)
             // 21
+        ];
+        const qRgbSet = [
+            [0, 128, 0], // green
+            [0, 0, 255], // blue
+            [144, 238, 144], // green (light)
+            [65, 105, 225], // blue (royal)
+            [143, 188, 143], // green (dark sea green)
+            [100, 149, 237], // blue (cornflower blue)
         ];
 
         const updateJsonFiles = (data) => jsonFiles.push(data);
         const drawChart = () => {
             const xValues = [];
-            const colors = rgbSet.slice();
 
-            jsonFiles.forEach((data) => {
+            jsonFiles.forEach((data, idx) => {
                 const laps = data.race.laps;
                 let yValues = [];
+                let inLap = outLap = 0.0;
+
+                let pittedOnPrevLap = false;
+
+                const getQualiSeconds = (qTime) => {
+                    const qTimeSlots = qTime.replaceAll('s', '').split(':');
+                    let qSeconds = 0.0;
+                    if (qTimeSlots.length === 2) {
+                        qSeconds = parseInt(qTimeSlots[0]) * 60 + parseFloat(qTimeSlots[1]);
+                    } else {
+                        qSeconds = parseFloat(qTimeSlots[0]);
+                    }
+                    return qSeconds;
+                }
+
+                const q1Seconds = getQualiSeconds(data.q1.time);
+                const q2Seconds = getQualiSeconds(data.q2.time);
 
                 laps.forEach((el, index) => {
                     let timeSlots = el.time.split(':'); // split it at the colons
@@ -176,23 +200,44 @@
                         if (index > 0 && xValues.length < (laps.length - 1)) {
                             xValues.push(index);
                         }
-                        yValues.push(seconds);
+                        if (el.events.includes('Pit') || pittedOnPrevLap) {
+                            yValues.push(null);
+                            pittedOnPrevLap = !pittedOnPrevLap;
+                        } else {
+                            yValues.push(seconds);
+                        }
                     }
                 });
 
-                const rgb = colors.shift();
-                // fallback
-                if (rgb === undefined) {
-                    colors = rgbSet.slice();
-                    rgb = colors.shift();
-                }
+                const rgb = rgbSet[idx];
+                const q1Rgb = qRgbSet[idx * 2];
+                const q2Rgb = qRgbSet[idx * 2 + 1];
 
                 datasets.push({
                     label: data.manager,
                     backgroundColor: `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1.0)`,
                     borderColor: `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.5)`,
-                    data: yValues
+                    data: yValues,
+                    laps: data.race.laps,
                 });
+                datasets.push(
+                    {
+                        label: 'Q1 ' + data.manager,
+                        backgroundColor: `rgba(${q1Rgb[0]}, ${q1Rgb[1]}, ${q1Rgb[2]}, 1.0)`,
+                        borderColor: `rgba(${q1Rgb[0]}, ${q1Rgb[1]}, ${q1Rgb[2]}, 0.5)`,
+                        data: new Array(xValues.length).fill(q1Seconds),
+                        time: 'Q1 ' + data.q1.time.replaceAll('s', ''),
+                    }
+                );
+                datasets.push(
+                    {
+                        label: 'Q2 ' + data.manager,
+                        backgroundColor: `rgba(${q2Rgb[0]}, ${q2Rgb[1]}, ${q2Rgb[2]}, 1.0)`,
+                        borderColor: `rgba(${q2Rgb[0]}, ${q2Rgb[1]}, ${q2Rgb[2]}, 0.5)`,
+                        data: new Array(xValues.length).fill(q2Seconds),
+                        time: 'Q2 ' + data.q2.time.replaceAll('s', ''),
+                    }
+                );
             });
 
             if (charts.length > 0) {
@@ -237,11 +282,25 @@
                     },
                     plugins: {
                         legend: {
-                            position: 'top',
+                            position: 'left',
+                            align: 'start',
+                            fullSize: true,
                         },
                         title: {
                             display: true,
                             text: 'Click on rectangles to show/hide lap chart'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ((item, data) => {
+                                    if (!!item.dataset.laps) {
+                                        return item.dataset.laps[item.dataIndex + 1].time;
+                                    }
+                                    if (!!item.dataset.time) {
+                                        return item.dataset.time;
+                                    }
+                                })
+                            }
                         }
                     }
                 }
