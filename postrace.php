@@ -24,8 +24,9 @@ $message = '';
 
 session_start();
 
-foreach (\ACCOUNTS as $username => $password) {
-    $userDir = str_replace('@', '_at_', $username);
+foreach (\ACCOUNTS as $userDir => $credentials) {
+    extract($credentials);
+
     if (!is_dir('seasons')) {
         mkdir('seasons');
     }
