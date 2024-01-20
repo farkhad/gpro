@@ -21,3 +21,11 @@ function isRaceAnalysisFile($element) {
     $pattern = '|S[0-9]+?R[0-9]+?[_ ]{1}[^\.]+?[^_]{1}?\.html$|';
     return preg_match($pattern, $element);
 }
+
+function sortRaceFiles($a, $b) {
+    $pattern = '/S[0-9]+?R([0-9]+)/';
+    preg_match($pattern, $a, $mA);
+    preg_match($pattern, $b, $mB);
+
+    return $mB[1] <=> $mA[1];
+}
