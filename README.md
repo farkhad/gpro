@@ -8,11 +8,12 @@
   - Staff & Facilities in HTML/JSON format
   - Sponsors in HTML/JSON format
   - Testing in HTML/JSON format
-- Joint Race Laps Analysis (L-Chart) 
-- Attach Car Points Distribution, Staff & Facilities, Sponsors data to Race Analysis JSON file
+- Sponsors Progress Overview<sup style="color:gold">new</sup>
+- Race Laps Analysis (L-Chart)<sup style="color:gold">updated</sup> 
+- CCP, S&F, Sponsors in JSON file
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
-- Find Driver's Profile
+- View Driver's Profile
 - Find Tech Director
 
 ## Requirements
@@ -33,7 +34,7 @@
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
-  - Open `config.php` with Notepad, set `USERNAME`, `PASSWORD` 
+  - <sup style="color:gold">updated</sup>Open `config.php` with Notepad, set `FOLDER_NAME` (&rarr; *GPRO Home Server/seasons/**FolderName***), `USERNAME`, `PASSWORD` 
 - Rename `homeserver.example.bat` to `homeserver.bat`, and `postrace.example.bat` to `postrace.bat`
   - Open `postrace.bat`, `homeserver.bat` with Notepad
     - Set path to *GPRO Home Server* folder
