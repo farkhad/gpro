@@ -1,55 +1,65 @@
 <div class="row">
     <div class="col">
-        <a href="postrace.php">Download</a> latest Post Race data.
-    </div>
-    <div class="col">
-        <a href="market.php">Download</a> latest Market Database.
-        <p class="d-inline-flex gap-1">
-            <button
-                class="btn btn-sm btn-secondary"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#market-files"
-                aria-expanded="false"
-                aria-controls="market-files"
-            >
-                Latest 5 Market Files
-            </button>
-            <div class="collapse" id="market-files">
-            <div class="card card-body">
-                <?php if (!count($marketFiles)) : ?>
-                    Market files not found. <a href="market.php">Download</a> latest drivers market database file.
-                <?php else : ?>
-                    Latest <?= \MARKET_FILES_LIMIT ?> Market Files
-                    <ol>
-                        <?php foreach ($marketFiles as $marketFile) : ?>
-                            <li><?= $marketFile ?></li>
-                        <?php endforeach; ?>
-                    </ol>
-                <?php endif; ?>
-
-                <?php if (!count($marketFilesTechDirectors)) : ?>
-                    Market files not found. <a href="market.php">Download</a> latest tech directors market database file.
-                <?php else : ?>
-                    Latest <?= \MARKET_FILES_LIMIT ?> Tech Directors Market Files
-                    <ol>
-                        <?php foreach ($marketFilesTechDirectors as $marketFile) : ?>
-                            <li><?= $marketFile ?></li>
-                        <?php endforeach; ?>
-                    </ol>
-                <?php endif; ?>
-            </div>
-            </div>
-        </p>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
     <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
         <h3><?= str_replace('seasons' . DIRECTORY_SEPARATOR, '', $userDir) ?></h3>
         <?php $curSeason = array_key_first($seasons); ?>
+        <div class="row mb-3">
+            <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
+            <?php $counter = isset($counter) ? $counter+1 : 0;?>
+            <div class="col">
+                <button
+                    class="btn btn-info mb-3 w-100"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#season<?= $season?>"
+                    aria-expanded="false"
+                    aria-controls="season<?= $season?>"
+                >
+                Season <?= $season?> Files
+                </button>
+                <div class="collapse multi-collapse <?= $counter === 0 ? 'show' : ''?>" id="season<?= $season?>">
+                    <div class="card card-body">
+                        <ul>
+                            <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
+                                <?php
+                                $seasonFolder = $userDir . DIRECTORY_SEPARATOR;
+                                $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
+                                $raceAnalysisFile = preg_replace('|[^' . $dirSeparator . ']+?' . $dirSeparator . '|is', '', $seasonRaceAnalysisFile);
+
+                                $raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
+                                $raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
+
+                                if (!file_exists($raceReplayFile)) {
+                                    unset($raceReplayFile);
+                                }
+
+                                if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
+                                    $jsonFileName = $matches[1] . '.json';
+                                    $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $jsonFileName;
+                                    if (!file_exists($jsonFile)) {
+                                        unset($jsonFile);
+                                    }
+                                }
+                                ?>
+                                <li>
+                                    <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
+                                    <?php if (!empty($jsonFile)) : ?>
+                                        <sup><a href="javascript:void(0)" data-bs-track="<?=
+                                            preg_replace(['/^.+?_/', '/\.html/'], ['', ''], $raceAnalysisFile) ?>" data-bs-season="<?= $season ?>" data-bs-json="<?= $jsonFileName ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">L-Chart</a></sup>
+                                        <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
+                                    <?php endif; ?>
+                                    <?php if (!empty($raceReplayFile)) : ?>
+                                        <sup><a href="<?= $raceReplayFile ?>" target="_blank">Replay</a></sup>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
         <?php if (isset($sponsors[$userDir])) :?>
-        <table class="table table-striped">
+        <table class="table table-hover table-striped">
             <tr>
                 <th colspan="18"><i>Season <?= $curSeason?></i></th>
             </tr>
@@ -106,7 +116,7 @@
             </tr>
             <?php endforeach; ?>
             <tr>
-                <td>Total</td>
+                <td>Total Gained</td>
                 <?php for ($n = 1; $n < 18; $n++) : ?>
                     <?php if (isset($totals[$n])) : ?>
                     <td class="text-success">+<?= $totals[$n] ?></td>
@@ -117,49 +127,32 @@
             </tr>
         </table>
         <?php endif; ?>
-        <ul>
-            <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
-            <li>Season <?= $season ?>
-                <ul>
-                    <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
-                        <?php
-                        $seasonFolder = $userDir . DIRECTORY_SEPARATOR;
-                        $dirSeparator = preg_quote(DIRECTORY_SEPARATOR);
-                        $raceAnalysisFile = preg_replace('|[^' . $dirSeparator . ']+?' . $dirSeparator . '|is', '', $seasonRaceAnalysisFile);
-
-                        $raceReplayFile = str_replace('.html', '.replay.html', $raceAnalysisFile);
-                        $raceReplayFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $raceReplayFile;
-
-                        if (!file_exists($raceReplayFile)) {
-                            unset($raceReplayFile);
-                        }
-
-                        if (preg_match('/(S[0-9]+?R[0-9]+?)[_ ]{1}/i', $raceAnalysisFile, $matches)) {
-                            $jsonFileName = $matches[1] . '.json';
-                            $jsonFile = $seasonFolder . $season . DIRECTORY_SEPARATOR . $jsonFileName;
-                            if (!file_exists($jsonFile)) {
-                                unset($jsonFile);
-                            }
-                        }
-                        ?>
-                        <li>
-                            <a href="<?= $seasonRaceAnalysisFile ?>" target="_blank"><?= $raceAnalysisFile ?></a>
-                            <?php if (!empty($jsonFile)) : ?>
-                                <sup><a href="javascript:void(0)" data-bs-track="<?=
-                                    preg_replace(['/^.+?_/', '/\.html/'], ['', ''], $raceAnalysisFile) ?>" data-bs-season="<?= $season ?>" data-bs-json="<?= $jsonFileName ?>" data-bs-toggle="modal" data-bs-target="#lapsModal">L-Chart</a></sup>
-                                <sup><a href="<?= $jsonFile ?>" target="_blank">JSON</a></sup>
-                            <?php endif; ?>
-                            <?php if (!empty($raceReplayFile)) : ?>
-                                <sup><a href="<?= $raceReplayFile ?>" target="_blank">Replay</a></sup>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </li>
-            <?php endforeach; ?>
-        </ul>
         <?php endforeach; ?>
     </div>
+</div>
+
+<div class="card card-body">
+    <?php if (!count($marketFiles)) : ?>
+        Market files not found. <a href="market.php">Download</a> latest drivers market database file.
+    <?php else : ?>
+        Latest <?= \MARKET_FILES_LIMIT ?> Market Files
+        <ol>
+            <?php foreach ($marketFiles as $marketFile) : ?>
+                <li><?= $marketFile ?></li>
+            <?php endforeach; ?>
+        </ol>
+    <?php endif; ?>
+
+    <?php if (!count($marketFilesTechDirectors)) : ?>
+        Market files not found. <a href="market.php">Download</a> latest tech directors market database file.
+    <?php else : ?>
+        Latest <?= \MARKET_FILES_LIMIT ?> Tech Directors Market Files
+        <ol>
+            <?php foreach ($marketFilesTechDirectors as $marketFile) : ?>
+                <li><?= $marketFile ?></li>
+            <?php endforeach; ?>
+        </ol>
+    <?php endif; ?>
 </div>
 
 <!-- Modal -->
