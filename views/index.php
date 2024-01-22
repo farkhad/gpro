@@ -58,13 +58,9 @@
             </div>
             <?php endforeach; ?>
         </div>
-        <?php if (isset($sponsors[$userDir])) :?>
         <table class="table table-hover table-striped">
             <tr>
-                <th colspan="18"><i>Season <?= $curSeason?></i></th>
-            </tr>
-            <tr>
-                <th scope="col">Sponsors</th>
+                <th scope="col"><i>Season <?= $curSeason?></i></th>
                 <?php
                 for ($n = 1; $n < 18; $n++) :
                     $pos = null;
@@ -74,6 +70,62 @@
                 ?>
                 <th scope="col">R<?= $n.(null !== $pos ? '<sup>'.$pos.'</sup>' : '')?></th>
                 <?php endfor; ?>
+            </tr>
+            <tr>
+                <th scope="row">Weather</th>
+                <?php
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+                    $laps = $seasonRaces[$raceId]['race']['laps'];
+                    $temperatures = array_column($laps, 'temp');
+                    $maxTemperature = max($temperatures);
+                    $minTemperature = min($temperatures);
+                    $avgTemperature = array_sum($temperatures) / count($laps);
+                    $color = 'text-bg-warning';
+                    if ($avgTemperature > 29) {
+                        $color = 'text-bg-danger';
+                    }
+                    if ($avgTemperature < 19) {
+                        $color = 'text-bg-primary';
+                    }
+                    echo '<td><span class="badge p-2 '.$color.'">'.round($avgTemperature).'°</span>'
+                        .'<br><small class="text-muted">'.$minTemperature.'°-'.$maxTemperature.'°</small>'
+                        .'</td>'.PHP_EOL
+                    ;
+                }
+                ?>
+            </tr>
+            <tr>
+                <th scope="row">Energy Used, %<br><small class="text-muted">Risk Dry/Wet</small></th>
+                <?php
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+                    $race = $seasonRaces[$raceId]['race'];
+                    $driver = $seasonRaces[$raceId]['driver'];
+                    $ctDry = $race['ct_dry'];
+                    $ctWet = $race['ct_wet'];
+                    $energyUsed = $driver['energy']['before_race']-$driver['energy']['after_race'];
+
+                    echo '<td>'.$energyUsed
+                        .($driver['energy']['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
+                        .'<br><small class="text-muted">'
+                        .$race['ct_dry'].'/'.$race['ct_wet']
+                        .'</small></td>'.PHP_EOL
+                    ;
+                }
+                ?>
+            </tr>
+            <?php if (isset($sponsors[$userDir])) :?>
+            <tr>
+                <th scope="col" colspan="18">Sponsors</th>
             </tr>
             <?php
             $totals = [];
@@ -125,8 +177,8 @@
                     <?php endif; ?>
                 <?php endfor; ?>
             </tr>
+            <?php endif; ?>
         </table>
-        <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </div>

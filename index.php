@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Home page
- * Display race analysis, market files
- */
+require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/src/functions.php';
 
 const MARKET_FILES_LIMIT = 5;
@@ -14,6 +11,9 @@ $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 $users = glob($seasonFolder . '*', GLOB_ONLYDIR);
 $raceAnalysisFiles = $seasonRaces = $sponsors = [];
 foreach ($users as $userDir) {
+    if (!isset(\ACCOUNTS[basename($userDir)])) {
+        continue;
+    }
     $seasons = [];
     $seasons = glob($userDir . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR);
     rsort($seasons);
