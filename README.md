@@ -8,8 +8,9 @@
   - Staff & Facilities in HTML/JSON format
   - Sponsors in HTML/JSON format
   - Testing in HTML/JSON format
-- Sponsors Progress Overview<sup style="color:gold">new</sup>
-- Race Laps Analysis (L-Chart)<sup style="color:gold">updated</sup> 
+- Sponsors Progress
+- Season's Weather, Energy and Risks Used
+- Race Laps Analysis (L-Chart)
 - CCP, S&F, Sponsors in JSON file
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
@@ -18,23 +19,23 @@
 
 ## Requirements
 - Microsoft Windows 7 or higher
-- Installed PHP 8 or higher ([Download](https://windows.php.net/download))
-- Installed Composer 2 or higher ([Download](https://getcomposer.org/doc/00-intro.md#installation-windows))
+- PHP 8 or higher ([Download](https://windows.php.net/download))
+- Composer 2 or higher ([Download](https://getcomposer.org/doc/00-intro.md#installation-windows))
 
 ## Installation
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to preferred *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run terminal command `composer install`
+- Navigate to *GPRO Home Server* folder and run console command `composer install`
 
 ## Update
 - Make backup of *GPRO Home Server* folder
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run terminal command `composer install`
+- Navigate to *GPRO Home Server* folder and run console command `composer install`
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
-  - <sup style="color:gold">updated</sup>Open `config.php` with Notepad, set `FOLDER_NAME` (&rarr; *GPRO Home Server/seasons/**FolderName***), `USERNAME`, `PASSWORD` 
+  - Open `config.php` with Notepad, set `FOLDER_NAME` (&rarr; *GPRO Home Server/seasons/**FolderName***), `USERNAME`, `PASSWORD` 
 - Rename `homeserver.example.bat` to `homeserver.bat`, and `postrace.example.bat` to `postrace.bat`
   - Open `postrace.bat`, `homeserver.bat` with Notepad
     - Set path to *GPRO Home Server* folder
@@ -52,8 +53,8 @@ Alternatively, setup Windows Task Scheduler to run `postrace.bat` after every ra
 ### Manually
 Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost:8000`
 - http://localhost:8000/ Home page
-- http://localhost:8000/postrace.php Download latest Race Analysis html file
-- http://localhost:8000/market.php Download latest market database file
+- http://localhost:8000/postrace.php Download latest Post Race data
+- http://localhost:8000/market.php Download latest Market Database
 - http://localhost:8000/find.php Find best driver
 - http://localhost:8000/profile.php Find driver's profile
 - http://localhost:8000/find-td.php Find tech director
