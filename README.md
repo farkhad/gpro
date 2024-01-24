@@ -51,7 +51,7 @@ When you are finished working on *GPRO Home Server*, press `CTRL+C` and type `Y`
 Alternatively, setup Windows Task Scheduler to run `postrace.bat` after every race.
 
 ### Manually
-Navigate to *GPRO Home Server* folder and run terminal command `php -S localhost:8000`
+Navigate to *GPRO Home Server* folder and run console command `php -S localhost:8000`
 - http://localhost:8000/ Home page
 - http://localhost:8000/postrace.php Download latest Post Race data
 - http://localhost:8000/market.php Download latest Market Database

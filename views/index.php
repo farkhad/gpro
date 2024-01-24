@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col">
     <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
-        <h3><?= str_replace('seasons' . DIRECTORY_SEPARATOR, '', $userDir) ?></h3>
+        <h3><?= basename($userDir) ?></h3>
         <?php $curSeason = array_key_first($seasons); ?>
         <div class="row mb-3">
             <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
@@ -81,25 +81,38 @@
                         continue;
                     }
                     $laps = $seasonRaces[$raceId]['race']['laps'];
+                    // remove lap 0
+                    array_shift($laps);
 
                     $wetLaps = array_filter($laps, fn ($lap) => 'W' === $lap['weather']);
-                    $nbWetLaps = count($wetLaps)-1;
-                    $nbLaps = count($laps)-1;
+                    $nbWetLaps = count($wetLaps);
+                    $nbLaps = count($laps);
                     $percentageWetLaps = round($nbWetLaps*100/$nbLaps);
 
                     $temperatures = array_column($laps, 'temp');
+
+                    $nbTemperatures = count($temperatures);
                     $maxTemperature = max($temperatures);
                     $minTemperature = min($temperatures);
-                    $avgTemperature = array_sum($temperatures) / count($laps);
+
+                    sort($temperatures);
+                    $middleValue = floor(($nbTemperatures-1)/2);
+                    if ($nbTemperatures % 2) {
+                        $medianTemperature = $temperatures[$middleValue];
+                    } else {
+                        $low = $temperatures[$middleValue];
+                        $high = $temperatures[$middleValue+1];
+                        $medianTemperature = (($low+$high)/2);
+                    }
 
                     $color = 'text-bg-warning';
-                    if ($avgTemperature > 29) {
+                    if ($medianTemperature > 29) {
                         $color = 'text-bg-danger';
                     }
-                    if ($avgTemperature < 19) {
+                    if ($medianTemperature < 19) {
                         $color = 'text-bg-primary';
                     }
-                    echo '<td><span class="badge p-2 '.$color.'">'.round($avgTemperature).'°</span>'
+                    echo '<td><span title="Median Value of Temperatures" class="badge p-2 '.$color.'">'.round($medianTemperature).'°</span>'
                         .'<div><small class="text-muted">'.$minTemperature.'°-'.$maxTemperature.'°</small></div>'
                         .
                         ($nbWetLaps > 0
@@ -115,11 +128,8 @@
                 <th scope="row">
                     Energy Used
                     <div><small class="text-muted">Risk Dry/Wet</small></div>
-                    <div>Recovered</div>
-                    <div><small class="text-muted">Recovery</small></div>
                 </th>
                 <?php
-                $prevEnergyLeft = null;
                 for ($n = 1; $n < 18; $n++) {
                     $raceId = 'S'.$curSeason.'R'.$n;
                     if (!isset($seasonRaces[$raceId])) {
@@ -132,14 +142,36 @@
                     $ctWet = $race['ct_wet'];
                     $energy = $driver['energy'];
                     $energyUsed = $energy['before_race']-$energy['after_race'];
+
+                    echo '<td>'
+                        .'<span title="Energy left after race '.$energy['after_race'].'%">'.$energyUsed.'</span>'
+                        .($energy['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
+                        .'<div><small class="text-muted">'.$race['ct_dry'].'/'.$race['ct_wet'].'</small></div>'
+                        .'</td>'.PHP_EOL
+                    ;
+                }
+                ?>
+            </tr>
+            <tr>
+                <th scope="row">Recovered</th>
+                <?php
+                $prevEnergyLeft = null;
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+                    $race = $seasonRaces[$raceId]['race'];
+                    $driver = $seasonRaces[$raceId]['driver'];
+                    $energy = $driver['energy'];
+                    $energyUsed = $energy['before_race']-$energy['after_race'];
                     $energyUsedInQuali = $energy['before_q1']-$energy['after_q1']
                         +$energy['before_q2']-$energy['after_q2']
                     ;
 
-                    echo '<td>'.$energyUsed
-                        .($energy['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
-                        .'<div><small class="text-muted">'.$race['ct_dry'].'/'.$race['ct_wet'].'</small></div>'
-                        .'<div title="Energy Recovered + Used In Qualification, %">'
+                    echo '<td>'
+                        .'<span title="Energy Recovered + Used In Qualification, %">'
                         .
                         (
                             isset($prevEnergyLeft)
@@ -147,11 +179,11 @@
                                 .'+'.$energyUsedInQuali
                             : ''
                         )
-                        .'</div><div>'
+                        .'</span><div>'
                         .
                         (
                             isset($prevEnergyLeft)
-                            ? '<small class="text-muted">'.$prevEnergyLeft.'&rarr;'.$energy['before_race'].'</small>'
+                            ? '<small class="text-muted" title="Energy After R'.($n-1).' &rarr; Before R'.$n.', %">'.$prevEnergyLeft.'&rarr;'.$energy['before_race'].'</small>'
                             : ''
                         )
                         .'</div></td>'.PHP_EOL
