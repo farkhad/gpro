@@ -16,7 +16,7 @@
                 >
                 Season <?= $season?> Files
                 </button>
-                <div class="collapse multi-collapse <?= $counter === 0 ? 'show' : ''?>" id="season<?= $season?>">
+                <div class="collapse multi-collapse" id="season<?= $season?>">
                     <div class="card card-body">
                         <ul>
                             <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
@@ -81,10 +81,17 @@
                         continue;
                     }
                     $laps = $seasonRaces[$raceId]['race']['laps'];
+
+                    $wetLaps = array_filter($laps, fn ($lap) => 'W' === $lap['weather']);
+                    $nbWetLaps = count($wetLaps)-1;
+                    $nbLaps = count($laps)-1;
+                    $percentageWetLaps = round($nbWetLaps*100/$nbLaps);
+
                     $temperatures = array_column($laps, 'temp');
                     $maxTemperature = max($temperatures);
                     $minTemperature = min($temperatures);
                     $avgTemperature = array_sum($temperatures) / count($laps);
+
                     $color = 'text-bg-warning';
                     if ($avgTemperature > 29) {
                         $color = 'text-bg-danger';
@@ -93,15 +100,26 @@
                         $color = 'text-bg-primary';
                     }
                     echo '<td><span class="badge p-2 '.$color.'">'.round($avgTemperature).'°</span>'
-                        .'<br><small class="text-muted">'.$minTemperature.'°-'.$maxTemperature.'°</small>'
+                        .'<div><small class="text-muted">'.$minTemperature.'°-'.$maxTemperature.'°</small></div>'
+                        .
+                        ($nbWetLaps > 0
+                            ? '<div title="Rain '.$nbWetLaps.' laps of '.$nbLaps.'"><i class="fa-solid fa-cloud-showers-heavy"></i>&nbsp;<small class="text-muted">'.$percentageWetLaps.'%</small></div>'
+                            : ''
+                        )
                         .'</td>'.PHP_EOL
                     ;
                 }
                 ?>
             </tr>
             <tr>
-                <th scope="row">Energy Used, %<br><small class="text-muted">Risk Dry/Wet</small></th>
+                <th scope="row">
+                    Energy Used
+                    <div><small class="text-muted">Risk Dry/Wet</small></div>
+                    <div>Recovered</div>
+                    <div><small class="text-muted">Recovery</small></div>
+                </th>
                 <?php
+                $prevEnergyLeft = null;
                 for ($n = 1; $n < 18; $n++) {
                     $raceId = 'S'.$curSeason.'R'.$n;
                     if (!isset($seasonRaces[$raceId])) {
@@ -112,14 +130,34 @@
                     $driver = $seasonRaces[$raceId]['driver'];
                     $ctDry = $race['ct_dry'];
                     $ctWet = $race['ct_wet'];
-                    $energyUsed = $driver['energy']['before_race']-$driver['energy']['after_race'];
+                    $energy = $driver['energy'];
+                    $energyUsed = $energy['before_race']-$energy['after_race'];
+                    $energyUsedInQuali = $energy['before_q1']-$energy['after_q1']
+                        +$energy['before_q2']-$energy['after_q2']
+                    ;
 
                     echo '<td>'.$energyUsed
-                        .($driver['energy']['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
-                        .'<br><small class="text-muted">'
-                        .$race['ct_dry'].'/'.$race['ct_wet']
-                        .'</small></td>'.PHP_EOL
+                        .($energy['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
+                        .'<div><small class="text-muted">'.$race['ct_dry'].'/'.$race['ct_wet'].'</small></div>'
+                        .'<div title="Energy Recovered + Used In Qualification, %">'
+                        .
+                        (
+                            isset($prevEnergyLeft)
+                            ? ($energy['before_race']-$prevEnergyLeft)
+                                .'+'.$energyUsedInQuali
+                            : ''
+                        )
+                        .'</div><div>'
+                        .
+                        (
+                            isset($prevEnergyLeft)
+                            ? '<small class="text-muted">'.$prevEnergyLeft.'&rarr;'.$energy['before_race'].'</small>'
+                            : ''
+                        )
+                        .'</div></td>'.PHP_EOL
                     ;
+
+                    $prevEnergyLeft = $energy['after_race'];
                 }
                 ?>
             </tr>
