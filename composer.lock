@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "243539fee4898be2be31395d832a09f6",
+    "content-hash": "f50579b0b97b6f174a7c5ea8e78f12f2",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -488,6 +488,63 @@
                 "source": "https://github.com/php-fig/http-message/tree/master"
             },
             "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "rakibtg/sleekdb",
+            "version": "2.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rakibtg/SleekDB.git",
+                "reference": "957468be56bfc5d23f8f5fa7438e90ede17f9d05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rakibtg/SleekDB/zipball/957468be56bfc5d23f8f5fa7438e90ede17f9d05",
+                "reference": "957468be56bfc5d23f8f5fa7438e90ede17f9d05",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5",
+                "spatie/phpunit-watcher": "^1.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SleekDB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "rakibtg",
+                    "email": "rakibtg@gmail.com"
+                }
+            ],
+            "description": "SleekDB - A 30Kb NoSQL Database made using PHP",
+            "keywords": [
+                "SleekDB",
+                "api",
+                "database",
+                "flatfile",
+                "framework",
+                "micro",
+                "nosql",
+                "php",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/rakibtg/SleekDB/issues",
+                "source": "https://github.com/rakibtg/SleekDB/tree/2.15"
+            },
+            "time": "2022-10-16T17:55:55+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

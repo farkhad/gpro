@@ -1,6 +1,7 @@
 {
   "require": {
-    "guzzlehttp/guzzle": "^7.2"
+    "guzzlehttp/guzzle": "^7.2",
+    "rakibtg/sleekdb": "^2.15"
   },
   "autoload": {
     "psr-4": {
