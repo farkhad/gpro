@@ -2,16 +2,14 @@
 ![](screenshots/home.png)
 
 ## Features
-- Automatically download Post Race Data
-  - Race Analysis in HTML/JSON format
-  - Light Race Replay in HTML format
-  - Staff & Facilities in HTML/JSON format
-  - Sponsors in HTML/JSON format
-  - Testing in HTML/JSON format
-- Sponsors Progress
-- Season's Weather, Energy and Risks Used
+- Post Race Data in HTML/JSON formats
+  - Race Analysis
+  - Light Race Replay
+  - Staff & Facilities
+  - Sponsors
+  - Testing
+- Season's Sponsors Progress, Weather, Energy, and Risks
 - Race Laps Analysis (L-Chart)
-- CCP, S&F, Sponsors in JSON file
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
 - View Driver's Profile
@@ -25,7 +23,7 @@
 ## Installation
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to preferred *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run console command `composer install`
+- Navigate to *GPRO Home Server* folder and run console commands: `composer install`, `php sync.php`
 
 ## Update
 - Make backup of *GPRO Home Server* folder
