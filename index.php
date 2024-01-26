@@ -1,7 +1,46 @@
 <?php
 
+use SleekDB\Store;
+
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/src/functions.php';
+
+if (!class_exists('SleekDB\Store')) {
+    echo "Navigate to <i>GPRO Home Server</i> folder and run console commands"
+        ."<ol><li><pre>composer install</pre></li>"
+        ."<li><pre>php sync.php</pre></li></ol>"
+    ;
+    exit;
+}
+
+$dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
+$tz = new DateTimeZone(GPRO_TIMEZONE);
+$dt = new DateTime('now', $tz);
+
+$seasonCalendarStore = new Store("calendar", $dbDir, ['timeout' => false]);
+$tracksStore = new Store("tracks", $dbDir, ['timeout' => false]);
+
+$queryBuilder = $seasonCalendarStore
+    ->createQueryBuilder()
+    ->where([
+        ["start", "<=", $dt->getTimestamp()],
+        ["end", ">=", $dt->getTimestamp()]
+    ])
+    ->orderBy(['season' => 'desc'])
+;
+$seasonCalendar = $queryBuilder->join(
+    function ($seasonCalendar) use ($tracksStore) {
+        return $tracksStore->findBy(['id', 'IN', array_column($seasonCalendar['tracks'], 'track_id')]);
+    },
+    "tracks_details"
+)->getQuery()->first();
+
+$trackDetailsKeys = array_keys(
+    array_column($seasonCalendar['tracks_details'], 'name', 'id')
+);
+
+$trackDetails = array_combine($trackDetailsKeys, $seasonCalendar['tracks_details']);
 
 const MARKET_FILES_LIMIT = 5;
 
@@ -11,7 +50,7 @@ $marketFolder = 'market' . DIRECTORY_SEPARATOR;
 $users = glob($seasonFolder . '*', GLOB_ONLYDIR);
 $raceAnalysisFiles = $seasonRaces = $sponsors = [];
 foreach ($users as $userDir) {
-    if (!isset(\ACCOUNTS[basename($userDir)])) {
+    if (!isset(ACCOUNTS[basename($userDir)])) {
         continue;
     }
     $seasons = [];
@@ -48,11 +87,11 @@ foreach ($users as $userDir) {
 
 $marketFiles = glob($marketFolder . '[!TD]*.php');
 rsort($marketFiles);
-$marketFiles = array_slice($marketFiles, 0, \MARKET_FILES_LIMIT);
+$marketFiles = array_slice($marketFiles, 0, MARKET_FILES_LIMIT);
 
 $marketFilesTechDirectors = glob($marketFolder . '[TD-]*.php');
 rsort($marketFilesTechDirectors);
-$marketFilesTechDirectors = array_slice($marketFilesTechDirectors, 0, \MARKET_FILES_LIMIT);
+$marketFilesTechDirectors = array_slice($marketFilesTechDirectors, 0, MARKET_FILES_LIMIT);
 
 $content = renderView(
     'index',
@@ -63,6 +102,8 @@ $content = renderView(
         'marketFilesTechDirectors',
         'seasonRaces',
         'sponsors',
+        'seasonCalendar',
+        'trackDetails',
     )
 );
 

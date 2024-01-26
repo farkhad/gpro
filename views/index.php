@@ -58,17 +58,44 @@
             </div>
             <?php endforeach; ?>
         </div>
+
+        <div class="table-responsive">
         <table class="table table-hover table-striped">
             <tr>
                 <th scope="col"><i>Season <?= $curSeason?></i></th>
                 <?php
                 for ($n = 1; $n < 18; $n++) :
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    $trackId = $seasonCalendar['tracks'][$n-1]['track_id'];
+                    $track = $trackDetails[$trackId];
                     $pos = null;
-                    if (isset($seasonRaces['S'.$curSeason.'R'.$n])) {
-                        $pos = $seasonRaces['S'.$curSeason.'R'.$n]['race']['finish'];
+                    $raceBtnColor = 'btn-light';
+                    $racePosColor = 'text-secondary';
+                    if (isset($seasonRaces[$raceId])) {
+                        $pos = (int) $seasonRaces[$raceId]['race']['finish'];
+                        if ($pos === 1) {
+                            $raceBtnColor = 'btn-success';
+                            $racePosColor = 'text-light';
+                        }
                     }
                 ?>
-                <th scope="col">R<?= $n.(null !== $pos ? '<sup>'.$pos.'</sup>' : '')?></th>
+                <td title="<?= $track['name'].($pos ? ' &mdash; P'.$pos : '')?>">
+                    <a
+                        class="btn btn-sm <?= $raceBtnColor?> fw-bold"
+                        data-bs-toggle="collapse"
+                        href="#race<?= $raceId?>"
+                        aria-expanded="false"
+                        aria-controls="race<?= $raceId?>"
+                    >
+                        R<?= $n.(null !== $pos ? '<sup class="'.$racePosColor.'">'.$pos.'</sup>' : '')?>
+                    </a>
+                    <div class="collapse text-nowrap" id="race<?= $raceId?>">
+                        <?= $track['name']?>
+                        <div title="P/H/A">
+                            <?= $track['power'].'/'.$track['handling'].'/'.$track['acceleration']?>
+                        </div>
+                    </div>
+                </th>
                 <?php endfor; ?>
             </tr>
             <tr>
@@ -249,7 +276,8 @@
             </tr>
             <?php endif; ?>
         </table>
-        <?php endforeach; ?>
+        </div>
+    <?php endforeach; ?>
     </div>
 </div>
 

@@ -31,7 +31,7 @@
 - Make backup of *GPRO Home Server* folder
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run console command `composer install`
+- Navigate to *GPRO Home Server* folder and run console commands: `composer install`, `php sync.php`
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
