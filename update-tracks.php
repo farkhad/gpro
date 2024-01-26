@@ -1,5 +1,4 @@
 <?php
-set_time_limit(2 * 60);
 
 use Gpro\TracksParser;
 use GuzzleHttp\Client;

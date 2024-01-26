@@ -1,5 +1,4 @@
 <?php
-set_time_limit(2 * 60);
 
 use Gpro\HomeParser;
 use Gpro\SeasonCalendarParser;
@@ -37,7 +36,10 @@ $homeHtml = $client->post('Login.asp?Redirect=gpro.asp', [
         ],
     ],
 ])->getBody()->getContents();
-$season = (new HomeParser($homeHtml))->season;
+
+$homeParser = new HomeParser($homeHtml);
+$season = $homeParser->season;
+$group = $homeParser->group;
 
 $seasonCalendarHtml = $client->get(
     'Calendar.asp',
@@ -45,25 +47,23 @@ $seasonCalendarHtml = $client->get(
         RequestOptions::HEADERS => [
             'User-Agent' => GPRO_UA
         ],
+        RequestOptions::QUERY => [
+            'Group' => $group,
+        ],
     ]
 )->getBody();
 
 $fetchedSeasonCalendar = (new SeasonCalendarParser($seasonCalendarHtml))->toArray();
-
-$insertCalendar = [
-    'season' => $season,
-    'tracks' => $fetchedSeasonCalendar['tracks'],
-    'test' => $fetchedSeasonCalendar['test'],
-];
+$fetchedSeasonCalendar['season'] = $season;
 
 $calendarStore = new Store("calendar", $dbDir, ['timeout' => false]);
 
 $calendar = $calendarStore->findOneBy(['season', '=', $season]);
 if (!empty($calendar['_id'])) {
-    $insertCalendar['_id'] = $calendar['_id'];
+    $fetchedSeasonCalendar['_id'] = $calendar['_id'];
 }
 
-$calendarRecord = $calendarStore->updateOrInsert($insertCalendar);
+$calendarRecord = $calendarStore->updateOrInsert($fetchedSeasonCalendar);
 
 if (php_sapi_name() === 'cli') {
     echo "Inserted ".count($calendarRecord['tracks'] ?? [])." season tracks";

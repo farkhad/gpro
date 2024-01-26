@@ -14,29 +14,52 @@ class SeasonCalendarParser extends PageParser
 {
     public array $calendar = [];
     public ?int $testTrackId = null;
+    public ?int $start = null;
+    public ?int $end = null;
 
     public function parse()
     {
         $pattern = '|<tr onmouseover.+?>.+?'
             . '<a href="TrackDetails\.asp\?id=(?<trackId>[0-9]+?)">.+?'
-            . '<td align="center".*?>(?<date>.+?)</td>'
+            . '<td align="center".*?>(?<date>.+?)</td>.+?'
+            . '<td align="center">(?<winner>.+?)</td>.+?'
             . '|is'
         ;
         if (!preg_match_all($pattern, $this->subject, $matches)) {
             return false;
         }
+        $winnerPattern = '|<a href="ManagerProfile\.asp\?IDM=(?<winnerId>[0-9]+?)">|is';
 
         $tz = new DateTimeZone(\GPRO_TIMEZONE);
         foreach ($matches['trackId'] as $i => $track) {
-            $dt = new DateTime(trim($matches['date'][$i]), $tz);
+            $date = trim($matches['date'][$i]);
+            if (preg_match('|Today|is', $date)) {
+                $date = 'Today';
+            }
+
+            $dt = new DateTime($date, $tz);
+
+            if ($i === 0) {
+                $this->start = $dt->getTimestamp();
+            } elseif ($i === 16) {
+                $this->end = $dt->getTimestamp();
+            }
+
+            $winnerId = null;
+            if (preg_match($winnerPattern, trim($matches['winner'][$i]), $m)) {
+                $winnerId = (int) $m['winnerId'];
+            }
+
 
             $this->calendar[] = [
                 'track_id' => (int) $matches['trackId'][$i],
                 'date' => $dt->getTimestamp(),
+                'winner_name' => trim(strip_tags($matches['winner'][$i])),
+                'winner_id' => $winnerId,
             ];
         }
 
-        $pattern = '|<td align="center">T.</td>.+?'
+        $pattern = '|<td align="center">T\.</td>.+?'
             . '<a href="TrackDetails\.asp\?id=(?<trackId>[0-9]+?)">.+?'
             . '|is'
         ;
@@ -50,7 +73,9 @@ class SeasonCalendarParser extends PageParser
     {
         return [
             'tracks' => $this->calendar,
-            'test' => $this->testTrackId
+            'start' => $this->start,
+            'end' => $this->end,
+            'test_track_id' => $this->testTrackId,
         ];
     }
 }

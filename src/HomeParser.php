@@ -10,6 +10,7 @@ namespace Gpro;
 class HomeParser extends PageParser
 {
     public ?int $season = null;
+    public ?string $group = null;
 
     public function parse()
     {
@@ -20,12 +21,19 @@ class HomeParser extends PageParser
         if (!preg_match($pattern, $this->subject, $matches)) {
             return false;
         }
-
         $this->season = (int) $matches['season'];
+
+        $pattern = '|<a href="Standings\.asp\?Group=(?<group>.+?)">|is';
+        if (preg_match($pattern, $this->subject, $matches)) {
+            $this->group = $matches['group'];
+        }
     }
 
     public function toArray()
     {
-        return ['season' => $this->season];
+        return [
+            'season' => $this->season,
+            'group' => $this->group
+        ];
     }
 }
