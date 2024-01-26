@@ -8,7 +8,7 @@
             <div class="row w-75 mb-3">
                 <div class="col">
                     <label for="link">Copy/Paste Driver's Profile Link</label>
-                    <input class="form-control form-control-sm" type="text" id="link" name="link" placeholder="https://www.gpro.net/DriverProfile.asp?ID=83" oninput="this.value !== '' ? this.form.id.value = Number(this.value.split('?ID=')[1]) : ''">
+                    <input class="form-control form-control-sm" type="text" id="link" name="link" placeholder="https://gpro.net/DriverProfile.asp?ID=83" oninput="this.value !== '' ? this.form.id.value = Number(this.value.split('?ID=')[1]) : ''">
                 </div>
             </div>
             <div class="row w-50">
@@ -21,16 +21,15 @@
                 </div>
             </div>
             <p class="mt-3 mb-0">
-                Search will be performed against maximum of <b><?= MARKET_FILES_LIMIT ?></b> latest market database files.
-            </p>
-            <p>You have got <b><?= count($marketFiles) ?></b> market database files on your computer.
+                You have got <b><?= count($marketFiles) ?></b> market database files on your computer.
             </p>
         </form>
     </div>
     <div class="col w-25">
         <?php if (!empty($profile)) : ?>
+            Season <?= $historySeason?>, Race <?= $historyRace?>
             <p class="text-success">
-                <b><a href="https://www.gpro.net/gb/DriverProfile.asp?ID=<?= $profile['ID'] ?>" target="_blank"><?= $profile['NAME'] ?></a></b> (<?= $profile['AGE'] ?>)
+                <b><a href="https://gpro.net/gb/DriverProfile.asp?ID=<?= $profile['ID'] ?>" target="_blank"><?= $profile['NAME'] ?></a></b> (<?= $profile['AGE'] ?>)
                 from database <b><?= $marketFile ?></b>
             </p>
             <table class="table table-striped table-sm font-monospace">
@@ -46,6 +45,7 @@
                     </tr>
                 <?php endforeach; ?>
             </table>
+            <div class="text-end text-muted"><small>Found in ~<?= $timeSpent?>s.</small></div>
         <?php elseif (!empty($driverId)) : ?>
             <p class="text-danger">Driver's profile with ID <?= $driverId ?> not found.</p>
         <?php endif; ?>
