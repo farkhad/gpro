@@ -14,12 +14,15 @@ if (!class_exists('SleekDB\Store')) {
     exit;
 }
 
+$countryCodes = array_flip(getAllCountries());
+
 $dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
 $tz = new DateTimeZone(GPRO_TIMEZONE);
 $dt = new DateTime('now', $tz);
 
 $seasonCalendarStore = new Store("calendar", $dbDir, ['timeout' => false]);
 $tracksStore = new Store("tracks", $dbDir, ['timeout' => false]);
+
 
 $queryBuilder = $seasonCalendarStore
     ->createQueryBuilder()
@@ -104,6 +107,7 @@ $content = renderView(
         'sponsors',
         'seasonCalendar',
         'trackDetails',
+        'countryCodes',
     )
 );
 

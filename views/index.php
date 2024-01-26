@@ -89,8 +89,9 @@
                     >
                         R<?= $n.(null !== $pos ? '<sup class="'.$racePosColor.'">'.$pos.'</sup>' : '')?>
                     </a>
-                    <div class="collapse text-nowrap" id="race<?= $raceId?>">
-                        <?= $track['name']?>
+                    <div class="mt-1 collapse text-nowrap" id="race<?= $raceId?>">
+                        <span title="<?=$track['country']?>" class="fi fi-<?= strtolower($countryCodes[$track['country']])?>"></span
+                        >&nbsp;<?= $track['name']?>
                         <div title="P/H/A">
                             <?= $track['power'].'/'.$track['handling'].'/'.$track['acceleration']?>
                         </div>
