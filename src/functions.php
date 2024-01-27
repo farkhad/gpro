@@ -30,6 +30,10 @@ function sortRaceFiles($a, $b) {
     return $mB[1] <=> $mA[1];
 }
 
+function isCli() {
+    return php_sapi_name() === 'cli';
+}
+
 function getAllCountries() {
     return [
         'AF' => 'Afghanistan',

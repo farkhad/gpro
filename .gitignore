@@ -3,3 +3,5 @@ vendor
 config.php
 homeserver.bat
 postrace.bat
+postrace.log
+market.log
