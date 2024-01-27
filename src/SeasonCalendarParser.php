@@ -33,8 +33,8 @@ class SeasonCalendarParser extends PageParser
         $tz = new DateTimeZone(\GPRO_TIMEZONE);
         foreach ($matches['trackId'] as $i => $track) {
             $date = trim($matches['date'][$i]);
-            if (preg_match('|Today|is', $date)) {
-                $date = 'Today';
+            if (preg_match('/(?<relativeDate>Today|Yesterday)/is', $date, $m)) {
+                $date = $m['relativeDate'];
             }
 
             $dt = new DateTime($date, $tz);
