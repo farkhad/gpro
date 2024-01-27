@@ -1,19 +1,17 @@
 <?php
 set_time_limit(2 * 60);
 
-/**
- *
- * Fetch raw post race data for enclosed GPRO accounts
- */
-
 use Gpro\CCPParser;
+use Gpro\HomeParser;
 use Gpro\RaceAnalysisParser;
+use Gpro\SeasonCalendarParser;
 use Gpro\SponsorParser;
 use Gpro\SponsorsParser;
 use Gpro\StaffAndFacilitiesParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
 use GuzzleHttp\RequestOptions;
+use SleekDB\Store;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
@@ -22,6 +20,7 @@ require_once __DIR__ . '/src/functions.php';
 $cli = isCli();
 $title = 'Download Post Race Data';
 $message = '';
+$dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
 
 session_start();
 
@@ -46,7 +45,7 @@ foreach (ACCOUNTS as $userDir => $credentials) {
     if ($cli) {
         echo 'Logging in gpro.net...'.PHP_EOL;
     }
-    $response = $client->post('Login.asp?Redirect=Help.asp', [
+    $homeHtml = $client->post('Login.asp?Redirect=gpro.asp', [
         'form_params' => [
             'textLogin' => $username,
             'textPassword' => $password,
@@ -60,7 +59,42 @@ foreach (ACCOUNTS as $userDir => $credentials) {
                 'User-Agent' => GPRO_UA
             ],
         ],
-    ]);
+    ])->getBody()->getContents();
+
+    $homeParser = new HomeParser($homeHtml);
+    $season = $homeParser->season;
+    $group = $homeParser->group;
+
+    if ($cli) {
+        echo 'Fetching Season Calendar of Season '.$season.' & Group '.$group.'...'.PHP_EOL;
+    }
+    $seasonCalendarHtml = $client->get(
+        'Calendar.asp',
+        [
+            RequestOptions::HEADERS => [
+                'User-Agent' => GPRO_UA
+            ],
+            RequestOptions::QUERY => [
+                'Group' => $group,
+            ],
+        ]
+    )->getBody();
+
+    $fetchedSeasonCalendar = (new SeasonCalendarParser($seasonCalendarHtml))->toArray();
+    $fetchedSeasonCalendar['season'] = $season;
+
+    $calendarStore = new Store("calendar", $dbDir, ['timeout' => false]);
+
+    $calendar = $calendarStore->findOneBy(['season', '=', $season]);
+    if (!empty($calendar['_id'])) {
+        $fetchedSeasonCalendar['_id'] = $calendar['_id'];
+    }
+
+    if ($cli) {
+        echo 'Storing Season Calendar in local database...'.PHP_EOL;
+    }
+    $calendarRecord = $calendarStore->updateOrInsert($fetchedSeasonCalendar);
+
     if ($cli) {
         echo 'Fetching Race Analysis page...'.PHP_EOL;
     }
@@ -217,7 +251,10 @@ foreach (ACCOUNTS as $userDir => $credentials) {
             .'<li><a href="'.$sfFile.'" target="_blank">'.$sfFile.'</a></li>'.PHP_EOL
             .'<li><a href="'.$sponsorsFile.'" target="_blank">'.$sponsorsFile.'</a></li>'.PHP_EOL
             .'<li><a href="'.$testingFile.'" target="_blank">' . $testingFile.'</a></li>'.PHP_EOL
-            .'</ul>'.PHP_EOL;
+            .'</ul>'.PHP_EOL
+        ;
+        $message .= '<p>Season Calendar has been updated.</p>'.PHP_EOL
+        ;
     } else {
         $message .= 'Cannot find Season/Race html code.'.PHP_EOL;
     }
