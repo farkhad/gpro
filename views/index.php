@@ -290,7 +290,74 @@
                 <?php endfor; ?>
             </tr>
             <?php endif; ?>
+            <!-- Driver -->
+            <tbody class="table-group-divider">
+            <tr>
+                <th scope="row" colspan="18">Driver</th>
+            </tr>
+            <?php
+            $driverSkills = [
+                "OA",
+                "CON",
+                "TAL",
+                "AGG",
+                "EXP",
+                "TEI",
+                "STA",
+                "CHA",
+                "MOT",
+                "REP",
+                "WEI",
+            ];
+            foreach ($driverSkills as $driverSkill) :
+            ?>
+            <tr>
+                <td><?= ucfirst(strtolower($driverSkill))?></td>
+                <?php
+                $prevDriver = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $driver = $seasonRaces[$raceId]['driver'];
+
+                    $diffAfterRace = $driver['diff'][$driverSkill] ?? 0;
+                    $driverSkillValue = $driver[$driverSkill]+$diffAfterRace;
+                    if ($diffAfterRace > 0) {
+                        $diffAfterRace = '+'.$diffAfterRace;
+                    }
+
+                    $diff = 0;
+                    if (!empty($prevDriver[$driverSkill])) {
+                        $diff = $driver[$driverSkill]+($driver['diff'][$driverSkill] ?? 0)
+                            -($prevDriver[$driverSkill]+($prevDriver['diff'][$driverSkill] ?? 0))
+                        ;
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.$diff;
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td title="Before Race '.$driver[$driverSkill]
+                        .' After Race '.$diffAfterRace.'">'
+                        .$driverSkillValue
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevDriver = $driver;
+                }
+                ?>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
             <!-- Staff & Facilities -->
+            <tbody class="table-group-divider">
             <tr>
                 <th scope="row" colspan="18">Staff & Facilities</th>
             </tr>
@@ -315,7 +382,6 @@
                         $diff = '+'.$diff;
                         $diffColor = 'text-success';
                     } elseif ($diff < 0) {
-                        $diff = '-'.$diff;
                         $diffColor = 'text-danger';
                     }
 
@@ -393,6 +459,7 @@
                 }
                 ?>
             </tr>
+            </tbody>
             <?php
             $staffKeys = [
                 'exp' => 'Experience',
