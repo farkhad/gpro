@@ -3,6 +3,7 @@
     <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
         <h3><?= basename($userDir) ?></h3>
         <?php $curSeason = array_key_first($seasons); ?>
+        <!-- Season Files -->
         <div class="row mb-3">
             <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
             <?php $counter = isset($counter) ? $counter+1 : 0;?>
@@ -59,8 +60,9 @@
             <?php endforeach; ?>
         </div>
 
-        <div class="table-responsive">
+        <!-- Season Dashboard -->
         <table class="table table-hover table-striped">
+            <!-- Season Race Numbers -->
             <tr>
                 <th scope="col"><i>Season <?= $curSeason?></i></th>
                 <?php
@@ -99,6 +101,7 @@
                 </th>
                 <?php endfor; ?>
             </tr>
+            <!-- Season Weather -->
             <tr>
                 <th scope="row">Weather</th>
                 <?php
@@ -152,9 +155,11 @@
                 }
                 ?>
             </tr>
+            <!-- Energy & Risks Used -->
             <tr>
                 <th scope="row">
                     Energy Used
+                    <div><small class="text-muted">Before&rarr;After</small></div>
                     <div><small class="text-muted">Risk Dry/Wet</small></div>
                 </th>
                 <?php
@@ -171,15 +176,23 @@
                     $energy = $driver['energy'];
                     $energyUsed = $energy['before_race']-$energy['after_race'];
 
-                    echo '<td>'
-                        .'<span title="Energy left after race '.$energy['after_race'].'%">'.$energyUsed.'</span>'
-                        .($energy['after_race'] === 0 ? '<sup class="text-danger">0</sup>' : '')
+                    echo '<td>'.$energyUsed.'&#65130;'
+                        .'<div><small class="text-muted">'
+                        .$energy['before_race'].'&rarr;'
+                        .
+                        (
+                            $energy['after_race'] === 0
+                            ? '<span class="text-danger">0</span>'
+                            : $energy['after_race']
+                        )
+                        .'</small></div>'
                         .'<div><small class="text-muted">'.$race['ct_dry'].'/'.$race['ct_wet'].'</small></div>'
                         .'</td>'.PHP_EOL
                     ;
                 }
                 ?>
             </tr>
+            <!-- Energy Recovered -->
             <tr>
                 <th scope="row">Recovered</th>
                 <?php
@@ -199,12 +212,12 @@
                     ;
 
                     echo '<td>'
-                        .'<span title="Energy Recovered + Used In Qualification, %">'
+                        .'<span title="Energy Recovered + Used In Qualification">'
                         .
                         (
                             isset($prevEnergyLeft)
                             ? ($energy['before_race']-$prevEnergyLeft)
-                                .'+'.$energyUsedInQuali
+                                .'+'.$energyUsedInQuali.'&#65130;'
                             : ''
                         )
                         .'</span><div>'
@@ -221,6 +234,7 @@
                 }
                 ?>
             </tr>
+            <!-- Sponsors -->
             <?php if (isset($sponsors[$userDir])) :?>
             <tr>
                 <th scope="col" colspan="18">Sponsors</th>
@@ -276,8 +290,211 @@
                 <?php endfor; ?>
             </tr>
             <?php endif; ?>
+            <!-- Staff & Facilities -->
+            <tr>
+                <th scope="row" colspan="18">Staff & Facilities</th>
+            </tr>
+            <tr>
+                <td>Overall</td>
+                <?php
+                $prevSf = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $sf = $seasonRaces[$raceId]['sf'];
+                    $diff = 0;
+                    if (!empty($prevSf['overall'])) {
+                        $diff = $sf['overall']-$prevSf['overall'];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.$diff;
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diff = '-'.$diff;
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td>'.$sf['overall']
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevSf = $sf;
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>Salary, K</td>
+                <?php
+                $prevSf = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $sf = $seasonRaces[$raceId]['sf'];
+                    $diff = 0;
+                    if (!empty($prevSf['salary'])) {
+                        $diff = $sf['salary']-$prevSf['salary'];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.round($diff/1000, 1);
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diff = round($diff/1000, 1);
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td title="'.$sf['salary'].'">'.round($sf['salary']/1000, 1)
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevSf = $sf;
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>Maintenance, K</td>
+                <?php
+                $prevSf = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $sf = $seasonRaces[$raceId]['sf'];
+                    $diff = 0;
+                    if (!empty($prevSf['maintenance'])) {
+                        $diff = $sf['maintenance']-$prevSf['maintenance'];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.round($diff/1000, 1);
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diff = round($diff/1000, 1);
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td title="'.$sf['maintenance'].'">'.round($sf['maintenance']/1000,1)
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevSf = $sf;
+                }
+                ?>
+            </tr>
+            <?php
+            $staffKeys = [
+                'exp' => 'Experience',
+                'mot' => 'Motivation',
+                'tech' => 'Technical skill',
+                'stress' => 'Stress',
+                'con' => 'Concentration',
+                'eff' => 'Efficiency',
+            ];
+            $facilitiesKeys = [
+                'commercial' => 'Commercial',
+                'pitstop' => 'Pitstop',
+                'wind' => 'Windtunnel',
+                'rd_workshop' => 'R&D workshop',
+                'rd_design' => 'R&D design center',
+                'eng_workshop' => 'Engineering workshop',
+                'alloy' => 'Alloy and chemical lab',
+            ];
+
+            $sfKeys = [
+                'staff' => $staffKeys,
+                'facilities' => $facilitiesKeys,
+            ];
+
+            foreach ($sfKeys as $sfKey => $sfAttrs) :
+                if ('facilities' === $sfKey) :
+            ?>
+            <tbody class="table-group-divider">
+            <tr>
+                <td>Avg. Training Lvl</td>
+                <?php
+                $prevSf = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $sf = $seasonRaces[$raceId]['sf'];
+                    $diff = 0;
+                    if (!empty($prevSf['training'])) {
+                        $diff = $sf['training']-$prevSf['training'];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.$diff;
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td>'.$sf['training']
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevSf = $sf;
+                }
+                ?>
+            </tr>
+            </tbody>
+            <?php endif; ?>
+            <tbody class="table-group-divider">
+            <?php
+                foreach ($sfAttrs as $staffKey => $staffAttr) :
+            ?>
+            <tr>
+                <td><?= $staffAttr?></td>
+                <?php
+                $prevSf = [];
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $sf = $seasonRaces[$raceId]['sf'][$sfKey];
+                    $diff = 0;
+                    if (!empty($prevSf[$staffKey])) {
+                        $diff = $sf[$staffKey]-$prevSf[$staffKey];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.$diff;
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td>'.$sf[$staffKey]
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+                    $prevSf = $sf;
+                }
+                ?>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+            <?php endforeach; ?>
         </table>
-        </div>
     <?php endforeach; ?>
     </div>
 </div>
@@ -286,7 +503,7 @@
     <?php if (!count($marketFiles)) : ?>
         Market files not found. <a href="market.php">Download</a> latest drivers market database file.
     <?php else : ?>
-        Latest <?= \MARKET_FILES_LIMIT ?> Market Files
+        Latest <?= MARKET_FILES_LIMIT ?> Market Files
         <ol>
             <?php foreach ($marketFiles as $marketFile) : ?>
                 <li><?= $marketFile ?></li>
@@ -297,7 +514,7 @@
     <?php if (!count($marketFilesTechDirectors)) : ?>
         Market files not found. <a href="market.php">Download</a> latest tech directors market database file.
     <?php else : ?>
-        Latest <?= \MARKET_FILES_LIMIT ?> Tech Directors Market Files
+        Latest <?= MARKET_FILES_LIMIT ?> Tech Directors Market Files
         <ol>
             <?php foreach ($marketFilesTechDirectors as $marketFile) : ?>
                 <li><?= $marketFile ?></li>
