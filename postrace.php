@@ -18,6 +18,16 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/src/functions.php';
 
 $cli = isCli();
+
+if (!class_exists('SleekDB\Store')) {
+    $message = "Navigate to <i>GPRO Home Server</i> folder and run console commands:".PHP_EOL
+        ."<ol><li><pre>composer install</pre></li>".PHP_EOL
+        ."<li><pre>php sync.php</pre></li></ol>".PHP_EOL
+    ;
+    echo $cli ? strip_tags($message) : $message;
+    exit;
+}
+
 $title = 'Download Post Race Data';
 $message = '';
 $dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
