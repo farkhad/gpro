@@ -10,18 +10,21 @@ namespace Gpro;
 class HomeParser extends PageParser
 {
     public ?int $season = null;
+    public ?int $nextTrackId = null;
     public ?string $group = null;
 
     public function parse()
     {
         $pattern = '|<div id="racebar">.+?'
 		    . '<h1>.+?Season (?<season>[0-9]+?),.+?'
+            . '<a href="TrackDetails\.asp\?id=(?<nextTrackId>[0-9]+?)">'
             . '|is'
         ;
         if (!preg_match($pattern, $this->subject, $matches)) {
             return false;
         }
         $this->season = (int) $matches['season'];
+        $this->nextTrackId = (int) $matches['nextTrackId'];
 
         $pattern = '|<a href="Standings\.asp\?Group=(?<group>.+?)">|is';
         if (preg_match($pattern, $this->subject, $matches)) {
@@ -33,7 +36,8 @@ class HomeParser extends PageParser
     {
         return [
             'season' => $this->season,
-            'group' => $this->group
+            'group' => $this->group,
+            'nextTrackId' => $this->nextTrackId,
         ];
     }
 }
