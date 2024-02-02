@@ -2,6 +2,11 @@
     <div class="col">
     <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
         <h3><?= basename($userDir) ?></h3>
+        <p>
+            <i class="fa-solid fa-circle-info"></i>
+            All your race data files can be directly accessed using Windows Explorer on your computer at
+            <b><?= GPRO_HOME_SERVER_FOLDER.DIRECTORY_SEPARATOR.$userDir?></b>
+        </p>
         <?php $curSeason = array_key_first($seasons); ?>
         <!-- Season Files -->
         <div class="row mb-3">
@@ -234,6 +239,43 @@
                 }
                 ?>
             </tr>
+            <!-- Balance -->
+            <tr>
+                <th scope="row">Balance, M</th>
+                <?php
+                $prevFinances = null;
+                for ($n = 1; $n < 18; $n++) {
+                    $raceId = 'S'.$curSeason.'R'.$n;
+                    if (!isset($seasonRaces[$raceId])) {
+                        echo '<td></td>'.PHP_EOL;
+                        continue;
+                    }
+
+                    $finances = $seasonRaces[$raceId]['finances'];
+                    $diff = round(($finances['balance']-($prevFinances['balance']??0))/1000000,1);
+
+                    $diff = 0;
+                    if (isset($prevFinances['balance'])) {
+                        $diff = $finances['balance']-$prevFinances['balance'];
+                    }
+                    $diffColor = 'text-secondary';
+                    if ($diff > 0) {
+                        $diff = '+'.round($diff/1000000,1);
+                        $diffColor = 'text-success';
+                    } elseif ($diff < 0) {
+                        $diff = round($diff/1000000,1);
+                        $diffColor = 'text-danger';
+                    }
+
+                    echo '<td>'.round($finances['balance']/1000000,1)
+                        .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'</td>'
+                    ;
+
+                    $prevFinances = $finances;
+                }
+                ?>
+            </tr>
             <!-- Sponsors -->
             <?php if (isset($sponsors[$userDir])) :?>
             <tr>
@@ -331,7 +373,7 @@
                     }
 
                     $diff = 0;
-                    if (!empty($prevDriver[$driverSkill])) {
+                    if (isset($prevDriver[$driverSkill])) {
                         $diff = $driver[$driverSkill]+($driver['diff'][$driverSkill] ?? 0)
                             -($prevDriver[$driverSkill]+($prevDriver['diff'][$driverSkill] ?? 0))
                         ;
@@ -374,7 +416,7 @@
 
                     $sf = $seasonRaces[$raceId]['sf'];
                     $diff = 0;
-                    if (!empty($prevSf['overall'])) {
+                    if (isset($prevSf['overall'])) {
                         $diff = $sf['overall']-$prevSf['overall'];
                     }
                     $diffColor = 'text-secondary';
@@ -406,7 +448,7 @@
 
                     $sf = $seasonRaces[$raceId]['sf'];
                     $diff = 0;
-                    if (!empty($prevSf['salary'])) {
+                    if (isset($prevSf['salary'])) {
                         $diff = $sf['salary']-$prevSf['salary'];
                     }
                     $diffColor = 'text-secondary';
@@ -439,7 +481,7 @@
 
                     $sf = $seasonRaces[$raceId]['sf'];
                     $diff = 0;
-                    if (!empty($prevSf['maintenance'])) {
+                    if (isset($prevSf['maintenance'])) {
                         $diff = $sf['maintenance']-$prevSf['maintenance'];
                     }
                     $diffColor = 'text-secondary';
@@ -501,7 +543,7 @@
 
                     $sf = $seasonRaces[$raceId]['sf'];
                     $diff = 0;
-                    if (!empty($prevSf['training'])) {
+                    if (isset($prevSf['training'])) {
                         $diff = $sf['training']-$prevSf['training'];
                     }
                     $diffColor = 'text-secondary';
@@ -539,7 +581,7 @@
 
                     $sf = $seasonRaces[$raceId]['sf'][$sfKey];
                     $diff = 0;
-                    if (!empty($prevSf[$staffKey])) {
+                    if (isset($prevSf[$staffKey])) {
                         $diff = $sf[$staffKey]-$prevSf[$staffKey];
                     }
                     $diffColor = 'text-secondary';
