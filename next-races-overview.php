@@ -11,6 +11,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/src/functions.php';
 
+if (!is_dir('cache')) {
+    mkdir('cache');
+}
+
 $dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
 $start = time();
 
@@ -46,8 +50,20 @@ $season = $homeParser->season;
 $calendarStore = new Store('calendar', $dbDir, ['timeout' => false]);
 $calendar = $calendarStore->findOneBy(['season', '=', $season]);
 
-$nextRaces = array_filter($calendar['tracks'], fn ($value) => is_null($value['winner_id']));
+$nextRaces = array_filter($calendar['tracks'] ?? [], fn ($value) => is_null($value['winner_id']));
+if (empty($nextRaces)) {
+    echo 'Available after season reset.';
+    exit;
+}
+
 $nextRace = array_shift($nextRaces);
+
+$cacheFile = 'cache'.DIRECTORY_SEPARATOR.$season.'-'.$nextRace['track_id'].'-overview.html';
+
+if (file_exists($cacheFile)) {
+    echo file_get_contents($cacheFile);
+    exit;
+}
 
 try {
     $trackDetailsHtml = $client->get(
@@ -137,4 +153,10 @@ foreach ($trackHistory as $i => $history) {
 $end = time();
 $elapsed = $end - $start;
 
-echo renderView('next-races-overview', compact('filteredHistory', 'medianHours', 'medianMinutes', 'elapsed'));
+$nextRacesOverview = renderView(
+    'next-races-overview',
+    compact('filteredHistory', 'medianHours', 'medianMinutes', 'elapsed')
+);
+file_put_contents($cacheFile, $nextRacesOverview);
+
+echo $nextRacesOverview;

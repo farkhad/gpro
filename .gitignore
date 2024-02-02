@@ -1,4 +1,5 @@
 .editorconfig
+cache
 vendor
 config.php
 homeserver.bat
