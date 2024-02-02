@@ -241,7 +241,10 @@
             </tr>
             <!-- Balance -->
             <tr>
-                <th scope="row">Balance, M</th>
+                <th scope="row">
+                    Balance, M
+                    <div><small class="text-muted">Earnings</small></div>
+                </th>
                 <?php
                 $prevFinances = null;
                 for ($n = 1; $n < 18; $n++) {
@@ -269,6 +272,7 @@
 
                     echo '<td>'.round($finances['balance']/1000000,1)
                         .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
+                        .'<div><small class="text-muted">+'.round($finances['total']/1000000,1).'</small></div>'
                         .'</td>'
                     ;
 
