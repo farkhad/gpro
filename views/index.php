@@ -64,7 +64,21 @@
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="mb-3" id="next-races-overview"></div>
+        <button
+            class="btn btn-info mb-3 w-100"
+            data-bs-toggle="collapse"
+            data-bs-target="#next-races-overview"
+            aria-expanded="false"
+            aria-controls="next-races-overview"
+        >
+            Next Race Overview
+        </button>
+        <div class="collapse multi-collapse mb-3" id="next-races-overview">
+            <div class="text-center">
+                <strong role="status">Retrieving data from gpro.net</strong>
+                <div class="spinner-border spinner-border-sm ms-auto" aria-hidden="true"></div>
+            </div>
+        </div>
 
         <!-- Season Dashboard -->
         <table class="table table-hover table-striped">
@@ -887,6 +901,8 @@
 
     function xhrListener() {
         const nextRacesOverview = document.querySelector('#next-races-overview');
+        nextRacesOverview.querySelector('div').remove()
+
         nextRacesOverview.insertAdjacentHTML('beforeend', this.responseText);
     }
 
