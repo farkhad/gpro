@@ -64,6 +64,7 @@
             </div>
             <?php endforeach; ?>
         </div>
+        <div class="mb-3" id="next-races-overview"></div>
 
         <!-- Season Dashboard -->
         <table class="table table-hover table-striped">
@@ -883,4 +884,18 @@
         };
         loadNextJsonFile();
     });
+
+    function xhrListener() {
+        const nextRacesOverview = document.querySelector('#next-races-overview');
+        nextRacesOverview.insertAdjacentHTML('beforeend', this.responseText);
+    }
+
+    function loadNextRacesOverview() {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', xhrListener);
+        xhr.open('GET', 'next-races-overview.php');
+        xhr.send();
+    }
+
+    loadNextRacesOverview();
 </script>

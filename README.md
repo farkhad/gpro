@@ -8,7 +8,17 @@
   - Staff & Facilities
   - Sponsors
   - Testing
-- Season's Sponsors Progress, Weather, Energy, and Risks
+- Next Race Overview
+  - Energy Prediction
+  - Median Elite Race Time
+- Season Dashboard
+  - Weather 
+  - Energy
+  - Risks
+  - Balance
+  - Sponsors
+  - Driver
+  - Staff & Facilities 
 - Race Laps Analysis (L-Chart)
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
