@@ -9,7 +9,7 @@
   - Sponsors
   - Testing
 - Next Race Overview
-  - Energy Prediction
+  - Energy History
   - Median Elite Race Time
 - Season Dashboard
   - Weather 

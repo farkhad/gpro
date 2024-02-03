@@ -2,14 +2,9 @@
     <div class="col">
     <?php foreach ($raceAnalysisFiles as $userDir => $seasons) : ?>
         <h3><?= basename($userDir) ?></h3>
-        <p>
-            <i class="fa-solid fa-circle-info"></i>
-            All your race data files can be directly accessed using Windows Explorer on your computer at
-            <b><?= GPRO_HOME_SERVER_FOLDER.DIRECTORY_SEPARATOR.$userDir?></b>
-        </p>
         <?php $curSeason = array_key_first($seasons); ?>
         <!-- Season Files -->
-        <div class="row mb-3">
+        <div class="row">
             <?php foreach ($seasons as $season => $seasonRaceAnalysisFiles) : ?>
             <?php $counter = isset($counter) ? $counter+1 : 0;?>
             <div class="col">
@@ -22,7 +17,12 @@
                 >
                 Season <?= $season?> Files
                 </button>
-                <div class="collapse multi-collapse" id="season<?= $season?>">
+                <div class="collapse multi-collapse mb-3" id="season<?= $season?>">
+                    <p class="collapse show" id="race-files-info">
+                        <small class="text-muted">All your race data files can be directly accessed using Windows Explorer on your computer at
+                        <b><?= GPRO_HOME_SERVER_FOLDER.DIRECTORY_SEPARATOR.$userDir?></b>
+                        </small>
+                    </p>
                     <div class="card card-body">
                         <ul>
                             <?php foreach ($seasonRaceAnalysisFiles as $seasonRaceAnalysisFile) : ?>
@@ -285,7 +285,7 @@
                         $diffColor = 'text-danger';
                     }
 
-                    echo '<td>'.round($finances['balance']/1000000,1)
+                    echo '<td class="text-nowrap">'.round($finances['balance']/1000000,1)
                         .($diff ? '<small class="'.$diffColor.'">'.$diff.'</small>': '')
                         .'<div><small class="text-muted">+'.round($finances['total']/1000000,1).'</small></div>'
                         .'</td>'

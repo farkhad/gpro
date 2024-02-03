@@ -56,7 +56,7 @@
     </table>
 </form>
 <p>Total: <?= count($tds) ?></p>
-<table class="d-none" id="table" data-toggle="table" data-search="true" data-show-columns="true" data-sortable="true">
+<table class="d-none" id="table" data-search="true" data-show-columns="true" data-sortable="true">
     <thead>
         <tr class="text-uppercase">
             <th data-field="NAME" data-sortable="true" data-formatter="nameFormatter">Name</th>
@@ -77,7 +77,7 @@
 </table>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.22.2/dist/bootstrap-table.min.js"></script>
 <script>
     var $table = $('#table');
     $table.bootstrapTable({

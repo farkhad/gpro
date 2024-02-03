@@ -11,9 +11,7 @@
             <th>Tal</th>
             <th>Agg</th>
             <th>Exp</th>
-            <th>Tei</th>
             <th>Sta</th>
-            <th>Wei</th>
         </tr>
         <?php foreach ($filteredHistory as $race) :?>
         <tr>
@@ -40,9 +38,7 @@
             <td><?= $race['driver']['TAL']?></td>
             <td><?= $race['driver']['AGG']?></td>
             <td><?= $race['driver']['EXP']?></td>
-            <td><?= $race['driver']['TEI']?></td>
             <td><?= $race['driver']['STA']?></td>
-            <td><?= $race['driver']['WEI']?></td>
             <?php else :?>
             <td colspan="10"></td>
             <?php endif;?>

@@ -64,7 +64,7 @@
     </table>
 </form>
 <p>Total: <?= count($drivers) ?></p>
-<table class="d-none" id="table" data-toggle="table" data-search="true" data-show-columns="true" data-sortable="true" data-buttons-align="left" data-search-align="left">
+<table class="d-none" id="table" data-search="true" data-show-columns="true" data-sortable="true" data-buttons-align="left" data-search-align="left">
     <thead>
         <tr class="text-uppercase">
             <th data-field="NAME" data-sortable="true" data-formatter="nameFormatter">Name</th>
@@ -89,7 +89,7 @@
 </table>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.22.2/dist/bootstrap-table.min.js"></script>
 <script>
     function nameFormatter(value, row) {
         return '<a href="<?= \BASE_DRIVER_URI ?>?ID=' + row.ID + '" target="_blank">' +
