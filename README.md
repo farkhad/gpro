@@ -1,16 +1,10 @@
 # [Grand Prix Racing Online](https://www.gpro.net) Home Server
-![](screenshots/home.png)
+All your post race data files are stored on your computer as a set of HTML and JSON files
+and can be accessed in a usual way using Windows Explorer
+
+![](screenshots/explorer.png)
 
 ## Features
-- Post Race Data in HTML/JSON formats
-  - Race Analysis
-  - Light Race Replay
-  - Staff & Facilities
-  - Sponsors
-  - Testing
-- Next Race Overview
-  - Energy History
-  - Median Elite Race Time
 - Season Dashboard
   - Weather 
   - Energy
@@ -19,6 +13,15 @@
   - Sponsors
   - Driver
   - Staff & Facilities 
+- Next Race Overview
+  - Energy History
+  - Median Elite Race Time
+- Post Race Data in HTML/JSON formats
+  - Race Analysis
+  - Light Race Replay
+  - Staff & Facilities
+  - Sponsors
+  - Testing
 - Race Laps Analysis (L-Chart)
 - Keep track of Drivers & Tech Directors Market Database
 - Find Best Driver incl. by Favourite Track
@@ -33,13 +36,17 @@
 ## Installation
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to preferred *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run console commands: `composer install`, `php sync.php`
+- Navigate to *GPRO Home Server* folder and run console commands 
+  1. `composer install` 
+  2. `php sync.php`
 
 ## Update
 - Make backup of *GPRO Home Server* folder
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
 - Extract zip to *GPRO Home Server* folder
-- Navigate to *GPRO Home Server* folder and run console commands: `composer install`, `php sync.php`
+- Navigate to *GPRO Home Server* folder and run console commands
+  1. `composer install` 
+  2. `php sync.php`
 
 ## Configuration
 - Rename `config.example.php` to `config.php`
