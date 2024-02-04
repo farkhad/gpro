@@ -1,8 +1,6 @@
 # [Grand Prix Racing Online](https://www.gpro.net) Home Server
-All your post race data files are stored on your computer as a set of HTML and JSON files
-and can be accessed in a usual way using Windows Explorer
 
-![](screenshots/explorer.png)
+Helps you to make use of your game historical data!
 
 ## Features
 - Season Dashboard
@@ -27,6 +25,11 @@ and can be accessed in a usual way using Windows Explorer
 - Find Best Driver incl. by Favourite Track
 - View Driver's Profile
 - Find Tech Director
+
+All your post race data files are stored on your computer as a set of HTML and JSON files
+and can be accessed in a usual way using Windows Explorer
+
+![](screenshots/explorer.png)
 
 ## Requirements
 - Microsoft Windows 7 or higher
