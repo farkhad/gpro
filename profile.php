@@ -6,10 +6,12 @@
  */
 
 use Gpro\DriverProfileParser;
+use Gpro\HomeParser;
 use Gpro\SeasonCalendarParser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\SessionCookieJar;
 use GuzzleHttp\RequestOptions;
+use SleekDB\Store;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
@@ -18,6 +20,7 @@ require_once __DIR__ . '/src/functions.php';
 $title = 'Driver\'s Profile';
 $marketFolder = 'market'.DIRECTORY_SEPARATOR;
 $marketFiles = glob($marketFolder . '[!TD]*.php');
+$dbDir = __DIR__.DIRECTORY_SEPARATOR.DB_FOLDER_NAME;
 
 session_start();
 
@@ -32,15 +35,12 @@ $start = time();
 if (!empty($_GET['id'])) {
     $driverId = (int) $_GET['id'];
 
-    $credentials = ACCOUNTS[array_key_first(ACCOUNTS)];
-    extract($credentials);
-
     $client = new Client(['base_uri' => GPRO_URL, 'cookies' => new SessionCookieJar('gpro', true)]);
 
-    $client->post('Login.asp?Redirect=Help.asp', [
+    $homeHtml = $client->post('Login.asp?Redirect=gpro.asp', [
         'form_params' => [
-            'textLogin' => $username,
-            'textPassword' => $password,
+            'textLogin' => USERNAME,
+            'textPassword' => PASSWORD,
             'token' => HASH,
             'Logon' => 'Login',
             'LogonFake' => 'Login',
@@ -51,7 +51,10 @@ if (!empty($_GET['id'])) {
                 'User-Agent' => GPRO_UA
             ],
         ],
-    ]);
+    ])->getBody()->getContents();
+
+    $homeParser = new HomeParser($homeHtml);
+    $curSeason = $homeParser->season;
 
     $driverHtml = $client->get(
         'DriverProfile.asp',
@@ -69,16 +72,26 @@ if (!empty($_GET['id'])) {
     $historySeason = $driverProfileParser->startedWorking['season'];
     $historyRace = $driverProfileParser->startedWorking['race'];
 
+    if ($historySeason === $curSeason) {
+        $calendarUrl = 'Calendar.asp';
+        $calendarQuery = [
+            'group' => 'Elite'
+        ];
+    } else {
+        $calendarUrl = 'History.asp';
+        $calendarQuery = [
+            'table' => 'Calendar',
+            'season' => $historySeason,
+        ];
+    }
+
     $historySeasonCalendarHtml = $client->get(
-        'History.asp',
+        $calendarUrl,
         [
             RequestOptions::HEADERS => [
                 'User-Agent' => GPRO_UA
             ],
-            RequestOptions::QUERY => [
-                'table' => 'Calendar',
-                'season' => $historySeason,
-            ],
+            RequestOptions::QUERY => $calendarQuery,
         ]
     )->getBody();
 
@@ -110,6 +123,19 @@ if (!empty($_GET['id'])) {
             foreach ($drivers['drivers'] as $driver) {
                 if ($driver['ID'] === $driverId) {
                     $profile = $driver;
+
+                    // Fav Tracks
+                    if (!empty($profile['FAV'])) {
+                        $tracksStore = new Store('tracks', $dbDir, ['timeout' => false]);
+                        $profile['FAV'] = array_column(
+                            $tracksStore->findBy([
+                                'id',
+                                'IN',
+                                array_map(fn ($v) => (int) $v, $profile['FAV'])
+                            ]),
+                            'name'
+                        );
+                    }
                     break;
                 }
             }

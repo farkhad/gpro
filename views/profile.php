@@ -38,6 +38,9 @@
                     if ($key === 'FAV') {
                         $value = join(', ', $value);
                     }
+                    if ($key === 'SAL' || $key === 'FEE') {
+                        $value = number_format($value, 0, null, '.');
+                    }
                     ?>
                     <tr>
                         <td class="w-25"><?= $key ?></td>
