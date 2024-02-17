@@ -33,7 +33,7 @@ and can be accessed in a usual way using Windows Explorer
 
 ## Requirements
 - Microsoft Windows 7 or higher
-- PHP 8 or higher ([Download](https://windows.php.net/download))
+- PHP 8 or higher ([Installation Guide](https://docs.google.com/document/d/1gE-fRv-ntlaiOILRcvGxTwULfOTe06qY4EOy9cFphbE/edit?usp=sharing))
 - Composer 2 or higher ([Download](https://getcomposer.org/doc/00-intro.md#installation-windows))
 
 ## Installation
