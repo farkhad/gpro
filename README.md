@@ -34,8 +34,17 @@ and can be accessed in a usual way using Windows Explorer
 
 ## Requirements
 - Microsoft Windows 7 or higher
-- PHP 8 or higher ([Installation Guide](https://docs.google.com/document/d/1gE-fRv-ntlaiOILRcvGxTwULfOTe06qY4EOy9cFphbE/edit?usp=sharing))
-- Composer 2 or higher ([Installation Guide](https://getcomposer.org/doc/00-intro.md#installation-windows))
+- PHP 8 or higher. [Installation Guide](https://docs.google.com/document/d/1gE-fRv-ntlaiOILRcvGxTwULfOTe06qY4EOy9cFphbE/edit?usp=sharing)
+- Composer 2 or higher. [Installation Guide](https://getcomposer.org/doc/00-intro.md#installation-windows)  
+  <details>
+    
+    <summary>If Composer installer throws an error</summary>
+    
+    `extension_dir` value is incorrect or a dll does not exist, then look at section `Program Output`, locate name of dynamic library causing the issue 
+    (e.g. `pdo_firebird`), open `php.ini` with Notepad, place `;` semicolon before `extension=pdo_firebird` (replace with library name causing the issue) 
+    so that it becomes `;extension=pdo_firebird`, save changes, and try to install Composer once again
+  
+  </details>
 
 ## Installation
 - Download [GPRO Home Server](https://github.com/farkhad/gpro/archive/refs/heads/main.zip) zip
