@@ -1,7 +1,6 @@
 # [Grand Prix Racing Online](https://www.gpro.net) Home Server
 
-Helps you to make use of your game historical data.  
-[Send me PM](https://gpro.net/NewMail.asp?IDM=931390) at gpro.net if you have any questions, suggestions, and/or ideas!
+Helps you to make use of your game historical data.
 
 ## Features
 - Season Dashboard
